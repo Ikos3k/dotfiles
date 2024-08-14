@@ -1,0 +1,43 @@
+Xft.dpi: 96
+Xft.antialias: true
+Xft.hinting: true
+Xft.rgba: rgb
+Xft.autohint: false
+Xft.hintstyle: hintslight
+Xft.lcdfilter: lcddefault
+
+! XTerm configuration
+XTerm*title: xterm
+XTerm*background: #181818
+XTerm*foreground: #e7e7e7
+XTerm*pointerColor: #16A085
+XTerm*faceName: Iosevka
+XTerm*faceSize: 20
+
+XTerm*VT100.Translations: #override \
+    Ctrl <Key>equal:    larger-vt-font() \n\
+    Ctrl <Key>minus:   smaller-vt-font() \n\
+    Ctrl <Key>V:       insert-selection(CLIPBOARD) \n\
+    Ctrl <Key>v:       insert-selection(PRIMARY)
+    
+! UXTerm configuration
+UXTerm*title: uxterm
+UXTerm*background: #181818
+UXTerm*foreground: #e7e7e7
+UXTerm*pointerColor: #16A085
+UXTerm*faceName: Iosevka
+UXTerm*faceSize: 20
+
+! rxvt-unicode configuration
+UXTerm*VT100.Translations: #override \
+    Ctrl <Key>equal:    larger-vt-font() \n\
+    Ctrl <Key>minus:   smaller-vt-font() \n\
+    Ctrl <Key>V:       insert-selection(CLIPBOARD) \n\
+    Ctrl <Key>v:       insert-selection(PRIMARY)
+    
+URxvt.termName: rxvt
+URxvt*depth: 32
+URxvt.transparent: false
+URxvt.font: xft:Iosevka:size=20
+URxvt.keysym.C-minus:  resize-font:smaller
+URxvt.keysym.C-equal:  resize-font:bigger

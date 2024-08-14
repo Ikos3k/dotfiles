@@ -1,0 +1,29 @@
+[window]
+opacity = 1
+decorations_theme_variant = "Dark"
+[cursor]
+style = "Block"
+[colors.primary]
+background = "#181818"
+foreground = "#f8f8f2"
+[colors.normal]
+black = "#21222c"
+red = "#ff5555"
+green = "#50fa7b"
+yellow = "#f1fa8c"
+magenta = "#ff79c6"
+cyan = "#ffffa7"
+blue = "#ffea00"
+white = "#f8f8f2"
+
+[font]
+size = 14.0
+[font.normal]
+family = "Iosevka"
+style = "Medium"
+[font.bold]
+family = "Iosevka"
+style = "Medium"
+[font.italic]
+family = "Iosevka"
+style = "Light Italic"
