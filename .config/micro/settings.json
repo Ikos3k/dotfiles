@@ -1,3 +1,9 @@
 {
-    "colorscheme": "atom-dark"
+    "autoindent": false,
+    "colorscheme": "atom-dark",
+    "diff": false,
+    "indentchar": ".",
+    "relativeruler": true,
+    "tabhighlight": true,
+    "tabstospaces": true
 }

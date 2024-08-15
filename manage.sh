@@ -51,8 +51,10 @@ backup_dotfiles() {
                 mkdir -p "$DOTFILES_DIR/$(dirname "$RELATIVE_FILE")"
 
                 if [ "$SHOW_DIFFS" -eq 1 ] && [ -f "$DOTFILES_DIR/$RELATIVE_FILE" ]; then
-                    echo "Differences for $RELATIVE_FILE:"
-                    diff -u --color=auto "$DOTFILES_DIR/$RELATIVE_FILE" "$FILE"
+                    if ! diff -q "$DOTFILES_DIR/$RELATIVE_FILE" "$FILE" >/dev/null; then
+                        echo "Differences for $RELATIVE_FILE:"
+                        diff -u --color=auto "$DOTFILES_DIR/$RELATIVE_FILE" "$FILE"
+                    fi
                 fi
 
                 cp -r "$FILE" "$DOTFILES_DIR/$RELATIVE_FILE"
@@ -70,8 +72,10 @@ backup_dotfiles() {
             mkdir -p "$DOTFILES_DIR/$(dirname "$RELATIVE_PATH")"
 
             if [ "$SHOW_DIFFS" -eq 1 ] && [ -f "$DOTFILES_DIR/$RELATIVE_PATH" ]; then
-                echo "Differences for $RELATIVE_PATH:"
-                diff -u --color=auto "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
+                if ! diff -q "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE" >/dev/null; then
+                    echo "Differences for $RELATIVE_PATH:"
+                    diff -u --color=auto "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
+                fi
             fi
 
             cp "$FILE" "$DOTFILES_DIR/$RELATIVE_PATH"
@@ -105,9 +109,12 @@ restore_dotfiles() {
             if [ -e "$FILE" ]; then
                 RELATIVE_FILE="${FILE#$DOTFILES_DIR/}"
                 TARGET_FILE="$USER_HOME/$RELATIVE_FILE"
+
                 if [ "$SHOW_DIFFS" -eq 1 ] && [ -f "$TARGET_FILE" ]; then
-                    echo "Differences for $RELATIVE_FILE:"
-                    diff -u --color=auto "$TARGET_FILE" "$FILE"
+                    if ! diff -q "$TARGET_FILE" "$FILE" >/dev/null; then
+                        echo "Differences for $RELATIVE_FILE:"
+                        diff -u --color=auto "$TARGET_FILE" "$FILE"
+                    fi
                 fi
 
                 if [ "$SAFE_MODE" -eq 1 ]; then
@@ -137,9 +144,11 @@ restore_dotfiles() {
     for FILE in "${SYSTEM_FILES[@]}"; do
         RELATIVE_PATH="${FILE#/}"
         if [ -f "$DOTFILES_DIR/$RELATIVE_PATH" ]; then
-            if [ "$SHOW_DIFFS" -eq 1 ] && [ -f "$FILE" ]; then
-                echo "Differences for $FILE:"
-                diff -u --color=auto "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
+           if [ "$SHOW_DIFFS" -eq 1 ] && [ -f "$FILE" ]; then
+                if ! diff -q "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE" >/dev/null; then
+                    echo "Differences for $FILE:"
+                    diff -u --color=auto "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
+                fi
             fi
 
             if [ "$SAFE_MODE" -eq 1 ]; then
