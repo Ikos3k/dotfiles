@@ -14,6 +14,8 @@ HOME_FILES=(
     ".tmux.conf"
     ".xinitrc"
     ".Xresources"
+    ".gtkrc-2.0"
+    ".config/gtk-3.0/settings.ini"
     ".config/i3/config"
     ".config/xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml"
     ".config/alacritty/alacritty.toml"
@@ -28,6 +30,7 @@ SYSTEM_FILES=(
     "/etc/i3status.conf"
     "/usr/bin/i3-sensible-terminal"
     "/usr/bin/i3-sensible-editor"
+    "/etc/environment"
 )
 
 PERMISSIONS_FILE="$DOTFILES_DIR/permissions.txt"

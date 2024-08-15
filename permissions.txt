@@ -1,3 +1,4 @@
 /etc/i3status.conf 644
 /usr/bin/i3-sensible-terminal 755
 /usr/bin/i3-sensible-editor 755
+/etc/environment 644

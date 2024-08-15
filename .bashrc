@@ -11,7 +11,7 @@ alias diff='diff -u --color=auto'
 alias ..='cd ..'
 
 export EDITOR=/usr/bin/micro
-export TERM=xterm-color
+export TERM=alacritty
 
 # Set the PS1 variable
 # Define the PS1 prompt
