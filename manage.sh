@@ -10,6 +10,7 @@ DOTFILES_DIR="$SCRIPT_DIR"
 
 HOME_FILES=(
     ".bash_profile"
+    ".bashrc"
     ".tmux.conf"
     ".xinitrc"
     ".Xresources"
@@ -29,6 +30,8 @@ SYSTEM_FILES=(
     "/usr/bin/i3-sensible-editor"
 )
 
+PERMISSIONS_FILE="$DOTFILES_DIR/permissions.txt"
+
 backup_dotfiles() {
     local SHOW_DIFFS=0
     if [[ "$1" == "-diff" ]]; then
@@ -43,6 +46,7 @@ backup_dotfiles() {
     fi
 
     echo "Backing up home directory dotfiles from $USER_HOME to $DOTFILES_DIR..."
+    > "$PERMISSIONS_FILE"
     for FILE_PATTERN in "${HOME_FILES[@]}"; do
         for FILE in "$USER_HOME/$FILE_PATTERN"; do
             if [ -e "$FILE" ]; then
@@ -78,11 +82,19 @@ backup_dotfiles() {
                 fi
             fi
 
+            FILE_PERMISSIONS=$(stat -c "%a" "$FILE")
+            echo "$FILE $FILE_PERMISSIONS" >> "$PERMISSIONS_FILE"
             cp "$FILE" "$DOTFILES_DIR/$RELATIVE_PATH"
+
+            chown -R "$SUDO_USER:$SUDO_USER" "$DOTFILES_DIR/$(dirname "$RELATIVE_PATH")"
+            chown "$SUDO_USER:$SUDO_USER" "$DOTFILES_DIR/$RELATIVE_PATH"
         else
             echo "No existing $FILE found in the system."
         fi
     done
+    
+    chown -R "$SUDO_USER:$SUDO_USER" "$(dirname "$PERMISSIONS_FILE")"
+    chown "$SUDO_USER:$SUDO_USER" "$PERMISSIONS_FILE"
     echo "Backup complete!"
 }
 
@@ -158,6 +170,11 @@ restore_dotfiles() {
                         echo "Restoring $RELATIVE_PATH to $FILE"
                         mkdir -p "$(dirname "$FILE")"
                         cp "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
+
+                        ORIGINAL_PERMISSIONS=$(grep -m 1 "^$FILE " "$PERMISSIONS_FILE" | awk '{print $2}')
+                        if [ -n "$ORIGINAL_PERMISSIONS" ]; then
+                            chmod "$ORIGINAL_PERMISSIONS" "$FILE"
+                        fi
                         ;;
                     *)
                         echo "Skipped restoring $RELATIVE_PATH"
@@ -167,6 +184,11 @@ restore_dotfiles() {
                 echo "Restoring $RELATIVE_PATH to $FILE"
                 mkdir -p "$(dirname "$FILE")"
                 cp "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
+
+                ORIGINAL_PERMISSIONS=$(grep -m 1 "^$FILE " "$PERMISSIONS_FILE" | awk '{print $2}')
+                if [ -n "$ORIGINAL_PERMISSIONS" ]; then
+                    chmod "$ORIGINAL_PERMISSIONS" "$FILE"
+                fi
             fi
         else
             echo "No $RELATIVE_PATH found in $DOTFILES_DIR."

@@ -25,6 +25,17 @@ config.colors = {
         '#ffffa7',
         '#8b81FF',
     },
+    ansi = {
+        'black',
+        'maroon',
+        'green',
+        '#ff0000',
+        '#ff0000',
+        'purple',
+        'teal',
+        'silver',
+    },
+
     cursor_border = '#aa8198',
     cursor_bg = '#501818',
     selection_bg = '#30181f'
