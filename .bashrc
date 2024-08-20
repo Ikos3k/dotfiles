@@ -16,6 +16,7 @@ alias ..='cd ..'
 alias ...='cd ../..'
 
 # git
+alias clonerec='git clone --depth=1 --recurse-submodules --shallow-submodules'
 alias clone='git clone --depth=1'
 alias deps='git submodule update --init --recursive --depth 1 --force'
 
