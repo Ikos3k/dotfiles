@@ -34,7 +34,7 @@ SYSTEM_FILES=(
     "/etc/i3status.conf"
     "/etc/environment"
     "/usr/local/bin/unmount_device"
-    "/usr/local/bin/mount_device"
+    "/usr/local/bin/unmount_device"
 )
 
 PERMISSIONS_FILE="$DOTFILES_DIR/permissions.txt"
@@ -62,8 +62,6 @@ backup_dotfiles() {
         for FILE in "$USER_HOME/$FILE_PATTERN"; do
             if [ -e "$FILE" ]; then
                 RELATIVE_FILE="${FILE#$USER_HOME/}"
-                echo "Backing up $RELATIVE_FILE to $DOTFILES_DIR"
-                mkdir -p "$DOTFILES_DIR/$(dirname "$RELATIVE_FILE")"
 
                 if [ "$SHOW_DIFFS" -eq 1 ] && [ -f "$DOTFILES_DIR/$RELATIVE_FILE" ]; then
                     if ! diff -q "$DOTFILES_DIR/$RELATIVE_FILE" "$FILE" >/dev/null; then
@@ -71,8 +69,26 @@ backup_dotfiles() {
                         diff -u --color=auto "$DOTFILES_DIR/$RELATIVE_FILE" "$FILE"
                     fi
                 fi
-
-                cp -r "$FILE" "$DOTFILES_DIR/$RELATIVE_FILE"
+                    
+                if [ "$SAFE_MODE" -eq 1 ]; then
+                    echo "Found $RELATIVE_FILE"
+                  
+                    read -p "Do you want to back up $RELATIVE_FILE? [y/N] " answer
+                    case "$answer" in
+                        [yY][eE][sS]|[yY])
+                            echo "Backing up $RELATIVE_FILE to $DOTFILES_DIR"
+                            mkdir -p "$DOTFILES_DIR/$(dirname "$RELATIVE_FILE")"
+                            cp -r "$FILE" "$DOTFILES_DIR/$RELATIVE_FILE"
+                            ;;
+                        *)
+                            echo "Skipped backing up $RELATIVE_FILE"
+                            ;;
+                    esac
+                else
+                    echo "Backing up $RELATIVE_FILE to $DOTFILES_DIR"
+                    mkdir -p "$DOTFILES_DIR/$(dirname "$RELATIVE_FILE")"
+                    cp -r "$FILE" "$DOTFILES_DIR/$RELATIVE_FILE"
+                fi
             else
                 echo "No existing $FILE found in home directory."
             fi
@@ -83,22 +99,43 @@ backup_dotfiles() {
     for FILE in "${SYSTEM_FILES[@]}"; do
         if [ -f "$FILE" ]; then
             RELATIVE_PATH="${FILE#/}"
-            echo "Backing up $FILE to $DOTFILES_DIR"
-            mkdir -p "$DOTFILES_DIR/$(dirname "$RELATIVE_PATH")"
 
-            if [ "$SHOW_DIFFS" -eq 1 ] && [ -f "$DOTFILES_DIR/$RELATIVE_PATH" ]; then
-                if ! diff -q "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE" >/dev/null; then
-                    echo "Differences for $RELATIVE_PATH:"
-                    diff -u --color=auto "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
+            if [ "$SAFE_MODE" -eq 1 ]; then
+                echo "Found $RELATIVE_PATH"
+                if [ "$SHOW_DIFFS" -eq 1 ] && [ -f "$DOTFILES_DIR/$RELATIVE_PATH" ]; then
+                    if ! diff -q "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE" >/dev/null; then
+                        echo "Differences for $RELATIVE_PATH:"
+                        diff -u --color=auto "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
+                    fi
                 fi
+                read -p "Do you want to back up $RELATIVE_PATH? [y/N] " answer
+                case "$answer" in
+                    [yY][eE][sS]|[yY])
+                        echo "Backing up $RELATIVE_PATH to $DOTFILES_DIR"
+                        mkdir -p "$DOTFILES_DIR/$(dirname "$RELATIVE_PATH")"
+                        cp -r "$FILE" "$DOTFILES_DIR/$RELATIVE_PATH"
+                        ;;
+                    *)
+                        echo "Skipped backing up $RELATIVE_PATH"
+                        ;;
+                esac
+            else
+                echo "Backing up $RELATIVE_PATH to $DOTFILES_DIR"
+                mkdir -p "$DOTFILES_DIR/$(dirname "$RELATIVE_PATH")"
+
+                if [ "$SHOW_DIFFS" -eq 1 ] && [ -f "$DOTFILES_DIR/$RELATIVE_PATH" ]; then
+                    if ! diff -q "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE" >/dev/null; then
+                        echo "Differences for $RELATIVE_PATH:"
+                        diff -u --color=auto "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
+                    fi
+                fi
+                FILE_PERMISSIONS=$(stat -c "%a" "$FILE")
+                echo "$FILE $FILE_PERMISSIONS" >> "$PERMISSIONS_FILE"
+                cp -r "$FILE" "$DOTFILES_DIR/$RELATIVE_PATH"
+
+                chown -R "$SUDO_USER:$SUDO_USER" "$DOTFILES_DIR/$(dirname "$RELATIVE_PATH")"
+                chown "$SUDO_USER:$SUDO_USER" "$DOTFILES_DIR/$RELATIVE_PATH"
             fi
-
-            FILE_PERMISSIONS=$(stat -c "%a" "$FILE")
-            echo "$FILE $FILE_PERMISSIONS" >> "$PERMISSIONS_FILE"
-            cp -r "$FILE" "$DOTFILES_DIR/$RELATIVE_PATH"
-
-            chown -R "$SUDO_USER:$SUDO_USER" "$DOTFILES_DIR/$(dirname "$RELATIVE_PATH")"
-            chown "$SUDO_USER:$SUDO_USER" "$DOTFILES_DIR/$RELATIVE_PATH"
         else
             echo "No existing $FILE found in the system."
         fi
@@ -208,16 +245,28 @@ restore_dotfiles() {
     echo "Restore complete!"
 }
 
-if [ "$1" == "backup" ]; then
-    backup_dotfiles "$2" # -diff
+requirements_dotfiles() {
+    
+}
+
+if [ "$1" == "requirements" ] then
+    requirements_dotfiles
+elif [ "$1" == "backup" ] && [ "$2" == "-diff" ]; then
+    backup_dotfiles "-diff"
+elif [ "$1" == "restore" ] && [ "$2" == "-unsafe" ]; then
+    backup_dotfiles "-unsafe"
+elif [ "$1" == "restore" ]; then
+    backup_dotfiles
 elif [ "$1" == "restore" ] && [ "$2" == "-diff" ]; then
     restore_dotfiles "-diff"
-elif [ "$1" == "restore" ] && [ "$2" == "-safe" ]; then
-    restore_dotfiles "-safe"
+elif [ "$1" == "restore" ] && [ "$2" == "-unsafe" ]; then
+    restore_dotfiles "-unsafe"
 elif [ "$1" == "restore" ]; then
     restore_dotfiles
 else
-    echo "Usage: $0 <backup|restore [-safe]> [-diff]"
-    echo " -diff  : Compare files and show differences during restore."
-    echo " -safe  : Prompt for confirmation before restoring each file. Automatically shows diffs."
+    echo "Usage: $0 <backup|restore> [-safe] [-diff]"
+    echo " -requirements : Install required packages."
+    echo " -diff         : Compare files and show differences during backup/restore."
+    echo " -unsafe       : "
+
 fi

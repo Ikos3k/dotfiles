@@ -1,12 +1,10 @@
 # DO NOT EDIT! This file will be overwritten by LXAppearance.
 # Any customization should be done in ~/.gtkrc-2.0.mine instead.
 
-include "/home/ikos3k/.gtkrc-2.0.mine"
+# include "/home/ikos3k/.gtkrc-2.0.mine"
 gtk-theme-name="Arc-Dark"
-gtk-application-prefer-dark-theme=true
-gtk-icon-theme-name=Adwaita
+gtk-icon-theme-name="Adwaita"
 gtk-font-name="Iosevka Expanded 12"
-gtk-cursor-theme-name="Adwaita"
 gtk-cursor-theme-size=0
 gtk-toolbar-style=GTK_TOOLBAR_BOTH
 gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR

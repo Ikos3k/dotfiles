@@ -1,0 +1,28 @@
+#!/bin/bash
+if [ $# -ne 2 ]; then
+    echo "Usage: mount_device <device> <mount_point>"
+    echo "ex: $ mount_device /dev/sdX1 /mnt/mydrive"
+    exit 1
+fi
+
+DEVICE=$1
+MOUNT_POINT=$2
+
+if [ ! -d "$MOUNT_POINT" ]; then
+    echo "Mount point directory does not exist. Creating $MOUNT_POINT."
+    mkdir -p "$MOUNT_POINT"
+fi
+
+if mountpoint -q "$MOUNT_POINT"; then
+    echo "$MOUNT_POINT is already mounted."
+    exit 1
+fi
+
+sudo mount "$DEVICE" "$MOUNT_POINT"
+
+if [ $? -eq 0 ]; then
+    echo "Mounted $DEVICE to $MOUNT_POINT successfully."
+else
+    echo "Failed to mount $DEVICE to $MOUNT_POINT."
+    exit 1
+fi

@@ -1,5 +1,6 @@
 {
-    "colorscheme": "cmc-16",
+    "autoindent": false,
+    "colorscheme": "atom-dark",
     "indentchar": ".",
     "relativeruler": true,
     "tabhighlight": true,

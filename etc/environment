@@ -4,4 +4,4 @@
 # Syntax: simple "KEY=VAL" pairs on separate lines
 #
 RADV_PERFTEST=aco
-QT_QPA_PLATFORMTHEME=qt5ct
+QT_QPA_PLATFORMTHEME=qt6ct

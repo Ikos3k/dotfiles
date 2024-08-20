@@ -1,0 +1,23 @@
+#!/bin/bash
+if [ $# -ne 1 ]; then
+    echo "Usage: unmount_device <mount_point>"
+    echo "ex: $ unmount_device /mnt/mydrive"
+    exit 1
+fi
+
+MOUNT_POINT=$1
+
+if ! mountpoint -q "$MOUNT_POINT"; then
+    echo "$MOUNT_POINT is not a mount point or does not exist."
+    exit 1
+fi
+
+sync
+sudo umount "$MOUNT_POINT"
+
+if [ $? -eq 0 ]; then
+    echo "Unmounted $MOUNT_POINT successfully."
+else
+    echo "Failed to unmount $MOUNT_POINT."
+    exit 1
+fi

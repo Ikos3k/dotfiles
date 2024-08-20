@@ -1,0 +1,8 @@
+os:
+  editPreset: 'micro'
+gui:
+  showIcons: false
+  paging:
+    useConfig: true
+git:
+  branchLogCmd: "git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium --oneline {{branchName}} --"
