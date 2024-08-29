@@ -56,8 +56,8 @@ floating_modifier $mod
 tiling_drag off
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
-# bindsym $mod+Return exec zutty
+# bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Return exec alacritty
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -227,8 +227,10 @@ client.background       #000000
 hide_edge_borders both
 # focus_follows_mouse no
 
+#            $ xprop
 # for_window [class=^.*] floating enable
 for_window [class="vlc"] floating enable
 # for_window [class="cs2"] exec --no-startup-id ~/scripts/cs2_res_xrandr.sh
+for_window [class="pavucontrol"] floating enable
 
 bindsym $mod+n bar mode toggle
