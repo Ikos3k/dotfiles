@@ -1,2 +1,5 @@
 TerminalEmulator=alacritty
-TerminalEmulatorDismissed=true 
+TerminalEmulatorDismissed=true
+WebBrowser=chromium
+FileManager=pcmanfm-qt
+

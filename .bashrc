@@ -22,6 +22,7 @@ alias deps='git submodule update --init --recursive --depth 1 --force'
 
 # pacman
 alias update='sudo pacman -Syu'
+alias i='sudo pacman -S'
 alias remove='sudo pacman -Rns'
 alias search='pacman -Ss'
 alias info='pacman -Si'
