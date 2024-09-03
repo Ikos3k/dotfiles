@@ -28,6 +28,8 @@ HOME_FILES=(
     ".config/micro/settings.json"
     ".config/pcmanfm/default/pcmanfm.conf"
     ".config/lazygit/config.yml"
+    ".config/dunst/dunstrc"
+    "scripts/volume.sh"
 )
 
 SYSTEM_FILES=(

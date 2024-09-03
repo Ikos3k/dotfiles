@@ -1,0 +1,20 @@
+[global]
+    origin = top-right
+
+[urgency_low]
+    # Set the color for low urgency notifications
+    background = "#181818"
+    foreground = "#FFFFFF"
+    frame_color = "#323232"
+
+[urgency_normal]
+    # Set the color for normal urgency notifications
+    background = "#005577"
+    foreground = "#FFFFFF"
+    frame_color = "#005577"
+
+[urgency_critical]
+    # Set the color for critical urgency notifications
+    background = "#380d05"
+    foreground = "#FFFFFF"
+    frame_color = "#FF4500"

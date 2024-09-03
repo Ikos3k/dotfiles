@@ -31,6 +31,7 @@ alias cleanup='sudo pacman -Rns $(pacman -Qdtq)'
 alias upgrade='sudo pacman -Syyu'
 alias keyfix='sudo pacman-key --init && sudo pacman-key --populate archlinux'
 
+export TERM=xterm-256color
 export EDITOR=/usr/bin/micro
 export TERMINAL=/usr/bin/alacritty
 
