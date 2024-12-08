@@ -1,7 +1,8 @@
 #!/bin/bash
+
 if [ $# -ne 2 ]; then
-    echo "Usage: mount_device <device> <mount_point>"
-    echo "ex: $ mount_device /dev/sdX1 /mnt/mydrive"
+    echo "Usage: $0 <device> <mount_point>"
+    echo "ex: $0 /dev/sdX1 /mnt/mydrive"
     exit 1
 fi
 
@@ -18,7 +19,16 @@ if mountpoint -q "$MOUNT_POINT"; then
     exit 1
 fi
 
-sudo mount "$DEVICE" "$MOUNT_POINT"
+# Check the filesystem type
+FS_TYPE=$(blkid -o value -s TYPE "$DEVICE")
+
+if [ "$FS_TYPE" == "ntfs" ]; then
+    echo "Filesystem type is NTFS. Using ntfs-3g to mount."
+    sudo mount -t ntfs-3g "$DEVICE" "$MOUNT_POINT"
+else
+    echo "Filesystem type is $FS_TYPE. Using default mount."
+    sudo mount "$DEVICE" "$MOUNT_POINT"
+fi
 
 if [ $? -eq 0 ]; then
     echo "Mounted $DEVICE to $MOUNT_POINT successfully."

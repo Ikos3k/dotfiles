@@ -1,10 +1,26 @@
 [global]
     origin = top-right
+    transparency = 0
+
+    # Width of the notification frame
+    frame_width = 1
+
+    # Color of the notification frame
+    frame_color = "#ff0000"
+
+    # Height of the progress bar (if used)
+    progress_bar_height = 4
+
+    # Color of the progress bar background
+    progress_bar_background = "#0000ff"
+ 
+    # Color of the progress bar
+    progress_bar_foreground = "#00ff00"
 
 [urgency_low]
     # Set the color for low urgency notifications
     background = "#181818"
-    foreground = "#FFFFFF"
+    foreground = "#ffffff"
     frame_color = "#323232"
 
 [urgency_normal]

@@ -1,4 +1,4 @@
-/etc/i3status.conf 644
+/etc/i3status.conf 755
 /etc/environment 644
 /usr/local/bin/unmount_device 755
 /usr/local/bin/mount_device 755

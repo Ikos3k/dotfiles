@@ -1,6 +1,9 @@
 {
+    "*h*.in": {
+        "filetype": "c++"
+    },
     "autoindent": false,
-    "colorscheme": "atom-dark",
+    "colorscheme": "twilight",
     "indentchar": ".",
     "relativeruler": true,
     "tabhighlight": true,

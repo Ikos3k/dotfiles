@@ -30,6 +30,9 @@ HOME_FILES=(
     ".config/lazygit/config.yml"
     ".config/dunst/dunstrc"
     "scripts/volume.sh"
+    "scripts/switch_audio_out.sh"
+    "scripts/fix_nameserver.sh"
+    "scripts/xrandr.sh"
 )
 
 SYSTEM_FILES=(
