@@ -1,0 +1,3 @@
+[submodule "scripts/Linux-Gaming"]
+	path = scripts/Linux-Gaming
+	url = https://github.com/Ikos3k/Linux-Gaming

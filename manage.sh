@@ -21,6 +21,8 @@ HOME_FILES=(
     ".config/Kvantum/KvGnomeDark#"
     ".config/i3/config"
     ".config/xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml"
+    # ".config/Thunar/accels.scm"
+    ".config/Thunar/uca.xml"
     ".config/alacritty/alacritty.toml"
     ".config/wezterm/wezterm.lua"
     ".config/xfce4/helpers.rc"

@@ -1,6 +1,25 @@
 #!/bin/bash
-if [ $# -ne 2 ]; then
-    echo "Usage: unmount_device <device> <mount_point>"
+
+power-off-device() {
+    sync
+    read -p "Do you want to power off the device $DEVICE? [y/N]: " CONFIRM
+    case "$CONFIRM" in
+        [yY][eE][sS]|[yY])
+            sudo udisksctl power-off -b "$DEVICE"
+            if [ $? -eq 0 ]; then
+                echo "Device $DEVICE powered off successfully."
+            else
+                echo "Failed to power off $DEVICE."
+            fi
+            ;;
+        *)
+            echo "Skipped powering off the device."
+            ;;
+    esac
+}
+
+if [ $# -lt 1 ]; then
+    echo "Usage: unmount_device <device> [mount_point]"
     echo "ex: $ unmount_device /dev/sdX1 /mnt/mydrive"
     exit 1
 fi
@@ -8,17 +27,21 @@ fi
 DEVICE=$1
 MOUNT_POINT=$2
 
-if ! mountpoint -q "$MOUNT_POINT"; then
-    echo "$MOUNT_POINT is not a mount point or does not exist."
+if ! grep -q "$DEVICE" /proc/mounts; then
+    echo "Device $DEVICE is not mounted."
+    power-off-device
+    exit 1
+fi
+
+if [ -n "$MOUNT_POINT" ] && ! mountpoint -q "$MOUNT_POINT"; then
+    echo "$MOUNT_POINT is not a valid mount point or does not exist."
     exit 1
 fi
 
 sync
-sudo umount "$MOUNT_POINT"
-if [ $? -eq 0 ]; then
+if sudo umount "$MOUNT_POINT"; then
     echo "Unmounted $MOUNT_POINT successfully."
-    sync
-    sudo udisksctl power-off -b $DEVICE
+    power-off-device
 else
     echo "Failed to unmount $MOUNT_POINT."
     exit 1

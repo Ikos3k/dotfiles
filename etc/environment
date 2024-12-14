@@ -4,4 +4,5 @@
 # Syntax: simple "KEY=VAL" pairs on separate lines
 #
 RADV_PERFTEST=aco
+mesa_glthread=true
 QT_QPA_PLATFORMTHEME=qt6ct

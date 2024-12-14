@@ -170,8 +170,8 @@ bar {
 
 # <colorclass> <border> <background> <text> <indicator> <child_border>
 # class                 border   backgr.  text    indicator child_border
-client.focused          #000000  #000000  #ffffff  #ffffff   #000000
-client.focused_inactive #333333  #333333  #ffffff  #ffffff   #333333
+client.focused          #333333  #000000  #ffffff  #ffffff   #000000
+client.focused_inactive #000000  #333333  #ffffff  #ffffff   #333333
 client.unfocused        #222222  #222222  #888888  #888888   #222222
 client.urgent           #ff0000  #000000  #ffffff  #ff0000   #000000
 client.placeholder      #000000  #111111  #ffffff  #000000   #111111
@@ -181,6 +181,7 @@ hide_edge_borders both
 # focus_follows_mouse no
 
 for_window [class="pavucontrol"] floating enable
+for_window [class="steam_proton"] floating enable
 
 bindsym $mod+a exec --no-startup-id ~/scripts/open_website.sh
 bindsym Print exec flameshot full --clipboard
