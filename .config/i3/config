@@ -180,8 +180,10 @@ client.background       #000000
 hide_edge_borders both
 # focus_follows_mouse no
 
-for_window [class="pavucontrol"] floating enable
 for_window [class="steam_proton"] floating enable
+for_window [class=".*\.exe"] floating enable
+
+for_window [class="pavucontrol"] floating enable
 
 bindsym $mod+a exec --no-startup-id ~/scripts/open_website.sh
 bindsym Print exec flameshot full --clipboard

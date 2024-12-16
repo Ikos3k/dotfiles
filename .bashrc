@@ -5,6 +5,7 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+# fastfetch
 fortune -as | cowsay -r
 
 alias rm='rm -i'
@@ -12,6 +13,8 @@ alias ls='ls --color=auto'
 alias ll='ls -alF'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
+alias feh='feh --scale-down'
+
 alias disks='lsblk -e7 -o NAME,SIZE,TYPE,MOUNTPOINT | while read -r line; do \
   disk=$(echo $line | awk "{print \$1}"); \
   if [[ "$disk" =~ ^sd[a-z]$ ]]; then \
@@ -22,6 +25,22 @@ alias disks='lsblk -e7 -o NAME,SIZE,TYPE,MOUNTPOINT | while read -r line; do \
     echo "$line"; \
   fi; \
 done'
+
+alias ips='printf "%s\t%s\t%s\n" "NAME" "KIND" "IP ADDRESS"; ip -o addr show | while read -r line; do \
+  name=$(echo $line | awk "{print \$2}"); \
+  kind=$(echo $line | awk "{print \$3}"); \
+  ip=$(echo $line | awk "{print \$4}" | sed "s/\/.*//g"); \
+  printf "%s\t%s\t%s\n" "$name" "$kind" "$ip"; \
+done'
+
+alias sinks='
+  printf "%s\t%s\n" "TYPE" "DEVICE NAME";
+  pactl list short sinks | awk "/alsa_output|sink/ {printf \"OUTPUT\t%s\\n\", \$2}";
+  pactl list short sources | awk "/alsa_input|source/ {printf \"INPUT\t%s\\n\", \$2}"
+'
+
+alias qr='qrencode -t ANSI -o - '
+
 alias snaps='snap list'
 alias files='ls | wc -l'
 
@@ -36,49 +55,34 @@ alias ??='echo $?'
 alias myip="curl ipinfo.io/ip"
 alias localip="ip a | grep inet | grep -v inet6 | grep -v '127.0.0.1' | awk '{print \$2}' | cut -d/ -f1"
 
-alias cleanupall='sudo pacman -Sc && yay -Sc && sudo journalctl --vacuum-time=2weeks' #Purge old cache in Arch
-alias fs='stat --printf="%s bytes\n"' # file size
+alias cleanupall='sudo pacman -Sc && yay -Sc && sudo journalctl --vacuum-time=2weeks'
+alias fs='stat --printf="%s bytes\n"'
 alias wipehist='history -c && history -w' # clear bash history
 
 # git
+alias g='git'
 alias clonerec='git clone --depth=1 --recurse-submodules --shallow-submodules'
 alias clone='git clone --depth=1'
 alias deps='git submodule update --init --recursive --depth 1 --force'
 alias pull='git pull'
 alias fetch='git fetch'
-alias fetch-pulls='function pull-req() { git fetch --depth 1 origin "refs/pull/*:refs/remotes/origin/pull/*"; }; pull-req' # fetch all pull requests
-alias fetch-open-pulls='function pull-req() { git fetch --depth 1 origin "refs/pull/*:refs/remotes/origin/pull/*"; }; pull-req' # fetch all open pull requests
-
-# BEGIN TESTS
-alias test3='test2() { echo tak; }; test2'
-alias test4='bash -c "function test2() { echo tak; }; test2"'
-
-test-colors() {
-  for i in {0..255}; do
-    echo -e "\033[38;5;${i}m colour${i} \033[0m"
-  done
-}
-# END TESTS
+alias fetch-pulls='function pull-req() { git fetch --depth 1 origin "refs/pull/*:refs/remotes/origin/pull/*"; }; pull-req'
+alias fetch-open-pulls='function pull-oreq() { git fetch --depth 1 origin "refs/pull/*:refs/remotes/origin/pull/*"; }; pull-oreq'
 
 # pacman
-alias update='sudo pacman -Syu'
 alias i='sudo pacman -S'
 alias ifile='sudo pacman -U'
-
 alias remove='sudo pacman -Rns'
 alias search='pacman -Ss'
 alias info='pacman -Si'
 alias list='pacman -Qe'
 alias cleanup='sudo pacman -Rns $(pacman -Qdtq)'
+alias update='sudo pacman -Syu'
 alias upgrade='sudo pacman -Syyu'
 alias keyfix='sudo pacman-key --init && sudo pacman-key --populate archlinux'
 
 alias powoff="sudo udisksctl power-off -b" 
 alias cmake-build="mkdir build && cd build && cmake .. && cmake --build . -j12"
-export MICRO_TRUECOLOR=0
-export TERM=xterm-256color
-export EDITOR=/usr/bin/micro
-export TERMINAL=/usr/bin/alacritty
 
 alias make-python-env="python3 -m venv my_env"
 alias activate-python="source my_env/bin/activate"
@@ -187,7 +191,7 @@ cdd() {
 # Set the PS1 variable
 # PS1='[\u@\h \W]\$ '
 
-# https://gist.github.com/rchowe/1727301s
+# https://gist.github.com/rchowe/1727301
 # PS1='$(git branch &>/dev/null; if [ $? -eq 0 ]; then \
 # echo "\[\e[1m\]\u@\h\[\e[0m\]: \w [\[\e[34m\]$(git branch | grep ^* | sed s/\*\ //)\[\e[0m\]\
 # $(echo `git status` | grep "nothing to commit" > /dev/null 2>&1; if [ "$?" -ne "0" ]; then \
@@ -231,13 +235,3 @@ else
 fi)'
 
 eval "$(zoxide init bash)"
-
-export PATH="~/my_msvc/bin/:~/.cargo/bin:$PATH"
-
-# sudo archlinux-java set java-17-openjdk
-# sudo archlinux-java set java-11-openjdk
-# sudo archlinux-java set java-8-openjdk/jre
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
-
-export ANDROID_SDK_ROOT=~/Android
-export ANDROID_NDK_HOME=~/Android/ndk

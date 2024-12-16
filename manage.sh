@@ -18,7 +18,7 @@ HOME_FILES=(
     ".config/gtk-3.0/settings.ini"
     ".config/qt6ct/qt6ct.conf"
     ".config/Kvantum/kvantum.kvconfig"
-    ".config/Kvantum/KvGnomeDark#"
+    ".config/Kvantum/KvGnomeDark#/KvGnomeDark#.kvconfig"
     ".config/i3/config"
     ".config/xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml"
     # ".config/Thunar/accels.scm"
@@ -34,7 +34,8 @@ HOME_FILES=(
     "scripts/volume.sh"
     "scripts/switch_audio_out.sh"
     "scripts/fix_nameserver.sh"
-    "scripts/xrandr.sh"
+    "scripts/Linux-Gaming"
+    ".config/sunshine/sunshine.conf"
 )
 
 SYSTEM_FILES=(
@@ -95,10 +96,15 @@ backup_dotfiles() {
                     fi
                 fi
 
-                if [ "$SHOW_DIFFS" -eq 1 ] && [ -f "$DOTFILES_DIR/$RELATIVE_FILE" ]; then
-                    if ! diff -q "$DOTFILES_DIR/$RELATIVE_FILE" "$FILE" >/dev/null; then
-                        echo "Differences for $RELATIVE_FILE:"
-                        diff -u --color=auto "$DOTFILES_DIR/$RELATIVE_FILE" "$FILE"
+                if [ "$SHOW_DIFFS" -eq 1 ]; then
+                    if [ ! -f "$TARGET_FILE" ]; then
+                        echo "[!!!] $RELATIVE_FILE does not exist in the backup directory. It will be backed up for the first time."
+                    fi
+                    if [ -f "$TARGET_FILE" ]; then
+                        if ! diff -q "$TARGET_FILE" "$FILE" >/dev/null; then
+                            echo "Differences for $RELATIVE_FILE:"
+                            diff -u --color=auto "$TARGET_FILE" "$FILE"
+                        fi
                     fi
                 fi
 
@@ -138,10 +144,15 @@ backup_dotfiles() {
                 fi
             fi
 
-            if [ "$SHOW_DIFFS" -eq 1 ] && [ -f "$TARGET_FILE" ]; then
-                if ! diff -q "$TARGET_FILE" "$FILE" >/dev/null; then
-                    echo "Differences for $RELATIVE_PATH:"
-                    diff -u --color=auto "$TARGET_FILE" "$FILE"
+            if [ "$SHOW_DIFFS" -eq 1 ]; then
+                if [ ! -f "$TARGET_FILE" ]; then
+                    echo "[!!!] $RELATIVE_PATH does not exist in the backup directory. It will be backed up for the first time."
+                fi
+                if [ -f "$TARGET_FILE" ]; then
+                    if ! diff -q "$TARGET_FILE" "$FILE" >/dev/null; then
+                        echo "Differences for $RELATIVE_PATH:"
+                        diff -u --color=auto "$TARGET_FILE" "$FILE"
+                    fi
                 fi
             fi
 
