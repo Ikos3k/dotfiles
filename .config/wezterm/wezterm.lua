@@ -12,34 +12,34 @@ config.window_decorations = "NONE"  -- "NONE" for no decorations, "TITLE" for ti
 config.default_cursor_style = 'SteadyBlock'
 
 -- Colors
-config.colors = {
-    background = "#181818",
-    foreground = "#fefefe",
-    brights = {
-        '#FFf1f2',
-        '#d57e85',
-        '#50fa7b',
-        '#dcb16c',
-        '#ffea00',
-        '#bb99b4',
-        '#ffffa7',
-        '#8b81FF',
-    },
-    ansi = {
-        'black',
-        'maroon',
-        'green',
-        '#ff0000',
-        '#ff0000',
-        'purple',
-        'teal',
-        'silver',
-    },
-
-    cursor_border = '#aa8198',
-    cursor_bg = '#501818',
-    selection_bg = '#30181f'
-}	
+-- config.colors = {
+--     background = "#181818",
+--     foreground = "#fefefe",
+--     brights = {
+--         '#FFf1f2',
+--         '#d57e85',
+--         '#50fa7b',
+--         '#dcb16c',
+--         '#ffea00',
+--         '#bb99b4',
+--         '#ffffa7',
+--         '#8b81FF',
+--     },
+--     ansi = {
+--         'black',
+--         'maroon',
+--         'green',
+--         '#ff0000',
+--         '#ff0000',
+--         'purple',
+--         'teal',
+--         'silver',
+--     },
+-- 
+--     cursor_border = '#aa8198',
+--     cursor_bg = '#501818',
+--     selection_bg = '#30181f'
+-- }	
 
 -- Font Settings
 config.font_size = 14.0

@@ -10,12 +10,14 @@ fortune -as | cowsay -r
 
 alias rm='rm -i'
 alias ls='ls --color=auto'
+alias la='ls -A'
+alias l='ls -CF'
 alias ll='ls -alF'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias feh='feh --scale-down'
 
-alias disks='lsblk -e7 -o NAME,SIZE,TYPE,MOUNTPOINT | while read -r line; do \
+alias disks='lsblk -e7 -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT | while read -r line; do \
   disk=$(echo $line | awk "{print \$1}"); \
   if [[ "$disk" =~ ^sd[a-z]$ ]]; then \
     model=$(udevadm info --query=all --name=/dev/$disk | grep "ID_MODEL=" | cut -d "=" -f 2); \
@@ -52,12 +54,12 @@ alias ...='cd ../..'
 alias back='cd -'
 alias ??='echo $?'
 
-alias myip="curl ipinfo.io/ip"
+alias myip="curl ipinfo.io/ip; echo"
 alias localip="ip a | grep inet | grep -v inet6 | grep -v '127.0.0.1' | awk '{print \$2}' | cut -d/ -f1"
 
 alias cleanupall='sudo pacman -Sc && yay -Sc && sudo journalctl --vacuum-time=2weeks'
 alias fs='stat --printf="%s bytes\n"'
-alias wipehist='history -c && history -w' # clear bash history
+alias wipehist='history -c && history -w'
 
 # git
 alias g='git'
@@ -85,9 +87,9 @@ alias powoff="sudo udisksctl power-off -b"
 alias cmake-build="mkdir build && cd build && cmake .. && cmake --build . -j12"
 
 alias make-python-env="python3 -m venv my_env"
-alias activate-python="source my_env/bin/activate"
+alias activate-env="source my_env/bin/activate"
 
-convert_mkv_to_mp4() {
+mkv_to_mp4() {
     if [[ -z "$1" ]]; then
         echo "Usage: convert_mkv_to_mp4 <input_file.mkv>"
         return 1
@@ -178,13 +180,36 @@ mkcd() {
     mkdir -p "$1" && cd "$1"
 }
 
-cdd() {
-    local dir
-    dir=$(find ~ -type d -name "*$1*" | head -n 1)
-    if [ -z "$dir" ]; then
-        echo "No directory found matching '$1'"
+choose_shell() {
+    echo "Available shells:"
+    cat /etc/shells
+    echo
+    read -p "Enter the full path of the shell you want to set as default: " selected_shell
+    if grep -Fxq "$selected_shell" /etc/shells; then
+        chsh -s "$selected_shell"
+        echo "Default shell changed to $selected_shell."
     else
-        z "$dir" || return
+        echo "Error: The selected shell is not in /etc/shells."
+    fi
+}
+
+get_last() {
+    num_items=${1:-1}
+    latest_items=$(ls -t | head -n "$num_items")
+    if [ -n "$latest_items" ]; then
+        echo "$latest_items"
+    else
+        echo "No files or directories found!"
+    fi
+}
+
+mv_last() {
+    latest_item=$(ls -t | head -n 1)
+    if [ -n "$latest_item" ]; then
+        mv "$latest_item" "$1"
+        echo "Moved '$latest_item' to '$1'"
+    else
+        echo "No file or directory found to move!"
     fi
 }
 

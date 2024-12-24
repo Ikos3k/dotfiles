@@ -1,6 +1,18 @@
 #!/bin/bash
 
+eject-device() {
+    sync
+    echo "Ejecting the device $DEVICE..."
+    sudo eject "$DEVICE"
+    if [ $? -eq 0 ]; then
+        echo "Device $DEVICE ejected successfully."
+    else
+        echo "Failed to eject $DEVICE. Continuing with power-off."
+    fi
+}
+
 power-off-device() {
+    eject-device
     sync
     read -p "Do you want to power off the device $DEVICE? [y/N]: " CONFIRM
     case "$CONFIRM" in
@@ -19,16 +31,34 @@ power-off-device() {
 }
 
 if [ $# -lt 1 ]; then
-    echo "Usage: unmount_device <device> [mount_point]"
+    echo "Usage: unmount_device <partition> [mount_point]"
     echo "ex: $ unmount_device /dev/sdX1 /mnt/mydrive"
     exit 1
 fi
 
-DEVICE=$1
+PARTITION=$1
 MOUNT_POINT=$2
 
-if ! grep -q "$DEVICE" /proc/mounts; then
-    echo "Device $DEVICE is not mounted."
+if [ -z "$MOUNT_POINT" ]; then
+    MOUNT_POINT=$(findmnt -n -o TARGET "$PARTITION")
+    if [ -z "$MOUNT_POINT" ]; then
+        echo "Could not find a mount point for device $PARTITION."
+        exit 1
+    fi
+    echo "Detected mount point for $PARTITION: $MOUNT_POINT"
+fi
+
+DEVICE="/dev/$(lsblk -no PKNAME "$PARTITION")"
+
+if [ -z "$DEVICE" ]; then
+    echo "Could not determine the device for $PARTITION."
+    exit 1
+fi
+
+echo "Device detected: $DEVICE"
+
+if ! grep -q "$PARTITION" /proc/mounts; then
+    echo "Partition $PARTITION is not mounted."
     power-off-device
     exit 1
 fi

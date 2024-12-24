@@ -14,6 +14,7 @@ HOME_FILES=(
     ".tmux.conf"
     ".xinitrc"
     ".Xresources"
+    ".zshrc"
     ".gtkrc-2.0"
     ".config/gtk-3.0/settings.ini"
     ".config/qt6ct/qt6ct.conf"
@@ -31,11 +32,15 @@ HOME_FILES=(
     ".config/pcmanfm/default/pcmanfm.conf"
     ".config/lazygit/config.yml"
     ".config/dunst/dunstrc"
+    ".config/fish/config.fish"
+    ".config/sunshine/sunshine.conf"
+    ".config/VSCodium/User/settings.json"
+    ".config/bottom/bottom.toml"
     "scripts/volume.sh"
     "scripts/switch_audio_out.sh"
     "scripts/fix_nameserver.sh"
+    "scripts/open_website.sh"
     "scripts/Linux-Gaming"
-    ".config/sunshine/sunshine.conf"
 )
 
 SYSTEM_FILES=(
@@ -122,7 +127,7 @@ backup_dotfiles() {
                     cp -r "$FILE" "$TARGET_FILE"
                 fi
             else
-                echo "No existing $FILE found in home directory."
+                echo "[!!] No existing $FILE found in home directory."
             fi
         done
     done
@@ -177,7 +182,7 @@ backup_dotfiles() {
             chown -R "$SUDO_USER:$SUDO_USER" "$DOTFILES_DIR/$(dirname "$RELATIVE_PATH")"
             chown "$SUDO_USER:$SUDO_USER" "$TARGET_FILE"
         else
-            echo "No existing $FILE found in the system."
+            echo "[!!] No existing $FILE found in the system."
         fi
     done
     
@@ -237,33 +242,41 @@ restore_dotfiles() {
                         echo "Differences for $RELATIVE_FILE:"
                         diff -u --color=auto "$TARGET_FILE" "$FILE"
                     fi
+                else
+                    if [ ! -f "$TARGET_FILE" ]; then
+                        echo "[!!] The file $RELATIVE_FILE did not exist on the system before, restoring it now."
+                    fi
                 fi
 
-                if [ "$SAFE_MODE" -eq 1 ]; then
-                    read -p "Do you want to restore $RELATIVE_FILE? [y/N] " answer
-                    case "$answer" in
-                        [yY][eE][sS]|[yY])
-                            echo "Restoring $RELATIVE_FILE to $USER_HOME"
-                            mkdir -p "$USER_HOME/$(dirname "$RELATIVE_FILE")"
-                            if [ "$USE_LINKS" -eq 1 ]; then
-                                ln -sf "$FILE" "$TARGET_FILE"
-                                echo "Symlink created: $TARGET_FILE -> $FILE"
-                            else
-                                cp -r "$FILE" "$TARGET_FILE"
-                            fi
-                            ;;
-                        *)
-                            echo "Skipped restoring $RELATIVE_FILE"
-                            ;;
-                    esac
+                if [ -f "$TARGET_FILE" ] && cmp -s "$FILE" "$TARGET_FILE"; then
+                    echo "$FILE is identical to the system file. Skipping restore."
                 else
-                    echo "Restoring $RELATIVE_FILE to $USER_HOME"
-                    mkdir -p "$USER_HOME/$(dirname "$RELATIVE_FILE")"
-                    if [ "$USE_LINKS" -eq 1 ]; then
-                        ln -sf "$FILE" "$TARGET_FILE"
-                        echo "Symlink created: $TARGET_FILE -> $FILE"
+                    if [ "$SAFE_MODE" -eq 1 ]; then
+                        read -p "Do you want to restore $RELATIVE_FILE? [y/N] " answer
+                        case "$answer" in
+                            [yY][eE][sS]|[yY])
+                                echo "Restoring $RELATIVE_FILE to $USER_HOME"
+                                mkdir -p "$USER_HOME/$(dirname "$RELATIVE_FILE")"
+                                if [ "$USE_LINKS" -eq 1 ]; then
+                                    ln -sf "$FILE" "$TARGET_FILE"
+                                    echo "Symlink created: $TARGET_FILE -> $FILE"
+                                else
+                                    cp -r "$FILE" "$TARGET_FILE"
+                                fi
+                                ;;
+                            *)
+                                echo "Skipped restoring $RELATIVE_FILE"
+                                ;;
+                        esac
                     else
-                        cp -r "$FILE" "$TARGET_FILE"
+                        echo "Restoring $RELATIVE_FILE to $USER_HOME"
+                        mkdir -p "$USER_HOME/$(dirname "$RELATIVE_FILE")"
+                        if [ "$USE_LINKS" -eq 1 ]; then
+                            ln -sf "$FILE" "$TARGET_FILE"
+                            echo "Symlink created: $TARGET_FILE -> $FILE"
+                        else
+                            cp -r "$FILE" "$TARGET_FILE"
+                        fi
                     fi
                 fi
             else
@@ -286,43 +299,51 @@ restore_dotfiles() {
                     echo "Differences for $FILE:"
                     diff -u --color=auto "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
                 fi
+            else
+                if [ ! -f "$FILE" ]; then
+                    echo "[!!] The file $RELATIVE_FILE did not exist on the system before, restoring it now."
+                fi
             fi
 
-            if [ "$SAFE_MODE" -eq 1 ]; then
-                read -p "Do you want to restore $RELATIVE_PATH? [y/N] " answer
-                case "$answer" in
-                    [yY])
-                        echo "Restoring $RELATIVE_PATH to $FILE"
-                        mkdir -p "$(dirname "$FILE")"
-                        if [ "$USE_LINKS" -eq 1 ]; then
-                            ln -sf "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
-                            echo "Symlink created: $FILE -> $DOTFILES_DIR/$RELATIVE_PATH"
-                        else
-                            cp -r "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
-                        fi
-
-                        ORIGINAL_PERMISSIONS=$(grep -m 1 "^$FILE " "$PERMISSIONS_FILE" | awk '{print $2}')
-                        if [ -n "$ORIGINAL_PERMISSIONS" ]; then
-                            chmod "$ORIGINAL_PERMISSIONS" "$FILE"
-                        fi
-                        ;;
-                    *)
-                        echo "Skipped restoring $RELATIVE_PATH"
-                        ;;
-                esac
+            if [ -f "$FILE" ] && cmp -s "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"; then
+                echo "$RELATIVE_PATH is identical to the system file. Skipping restore."
             else
-                echo "Restoring $RELATIVE_PATH to $FILE"
-                mkdir -p "$(dirname "$FILE")"
-                if [ "$USE_LINKS" -eq 1 ]; then
-                    ln -sf "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
-                    echo "Symlink created: $FILE -> $DOTFILES_DIR/$RELATIVE_PATH"
-                else
-                    cp -r "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
-                fi
+                if [ "$SAFE_MODE" -eq 1 ]; then
+                    read -p "Do you want to restore $RELATIVE_PATH? [y/N] " answer
+                    case "$answer" in
+                        [yY])
+                            echo "Restoring $RELATIVE_PATH to $FILE"
+                            mkdir -p "$(dirname "$FILE")"
+                            if [ "$USE_LINKS" -eq 1 ]; then
+                                ln -sf "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
+                                echo "Symlink created: $FILE -> $DOTFILES_DIR/$RELATIVE_PATH"
+                            else
+                                cp -r "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
+                            fi
 
-                ORIGINAL_PERMISSIONS=$(grep -m 1 "^$FILE " "$PERMISSIONS_FILE" | awk '{print $2}')
-                if [ -n "$ORIGINAL_PERMISSIONS" ]; then
-                    chmod "$ORIGINAL_PERMISSIONS" "$FILE"
+                            ORIGINAL_PERMISSIONS=$(grep -m 1 "^$FILE " "$PERMISSIONS_FILE" | awk '{print $2}')
+                            if [ -n "$ORIGINAL_PERMISSIONS" ]; then
+                                chmod "$ORIGINAL_PERMISSIONS" "$FILE"
+                            fi
+                            ;;
+                        *)
+                            echo "Skipped restoring $RELATIVE_PATH"
+                            ;;
+                    esac
+                else
+                    echo "Restoring $RELATIVE_PATH to $FILE"
+                    mkdir -p "$(dirname "$FILE")"
+                    if [ "$USE_LINKS" -eq 1 ]; then
+                        ln -sf "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
+                        echo "Symlink created: $FILE -> $DOTFILES_DIR/$RELATIVE_PATH"
+                    else
+                        cp -r "$DOTFILES_DIR/$RELATIVE_PATH" "$FILE"
+                    fi
+
+                    ORIGINAL_PERMISSIONS=$(grep -m 1 "^$FILE " "$PERMISSIONS_FILE" | awk '{print $2}')
+                    if [ -n "$ORIGINAL_PERMISSIONS" ]; then
+                        chmod "$ORIGINAL_PERMISSIONS" "$FILE"
+                    fi
                 fi
             fi
         else

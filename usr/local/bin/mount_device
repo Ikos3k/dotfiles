@@ -1,17 +1,17 @@
 #!/bin/bash
 
 if [ $# -ne 2 ]; then
-    echo "Usage: $0 <device> <mount_point>"
+    echo "Usage: $0 <partition> <mount_point>"
     echo "ex: $0 /dev/sdX1 /mnt/mydrive"
     exit 1
 fi
 
-DEVICE=$1
+PARTITION=$1
 MOUNT_POINT=$2
 
 if [ ! -d "$MOUNT_POINT" ]; then
     echo "Mount point directory does not exist. Creating $MOUNT_POINT."
-    mkdir -p "$MOUNT_POINT"
+    sudo mkdir -p "$MOUNT_POINT"
 fi
 
 if mountpoint -q "$MOUNT_POINT"; then
@@ -19,20 +19,12 @@ if mountpoint -q "$MOUNT_POINT"; then
     exit 1
 fi
 
-# Check the filesystem type
-FS_TYPE=$(blkid -o value -s TYPE "$DEVICE")
-
-if [ "$FS_TYPE" == "ntfs" ]; then
-    echo "Filesystem type is NTFS. Using ntfs-3g to mount."
-    sudo mount -t ntfs-3g "$DEVICE" "$MOUNT_POINT"
-else
-    echo "Filesystem type is $FS_TYPE. Using default mount."
-    sudo mount "$DEVICE" "$MOUNT_POINT"
-fi
+sudo mount -o uid=$(id -u),gid=$(id -g),umask=022 "$PARTITION" "$MOUNT_POINT"
 
 if [ $? -eq 0 ]; then
-    echo "Mounted $DEVICE to $MOUNT_POINT successfully."
+    FS_TYPE=$(blkid -o value -s TYPE "$PARTITION")
+    echo "Mounted $PARTITION ($FS_TYPE) to $MOUNT_POINT successfully."
 else
-    echo "Failed to mount $DEVICE to $MOUNT_POINT."
+    echo "Failed to mount $PARTITION to $MOUNT_POINT."
     exit 1
 fi

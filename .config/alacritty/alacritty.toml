@@ -1,3 +1,5 @@
+[terminal.shell]
+program = "/usr/bin/fish"
 [mouse]
 hide_when_typing = true
 [env]

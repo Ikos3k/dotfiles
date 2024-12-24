@@ -1,0 +1,13 @@
+{
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+    "cmake.pinnedCommands": [
+        "workbench.action.tasks.configureTaskRunner",
+        "workbench.action.tasks.runTask"
+    ],
+    "cmake.options.statusBarVisibility": "visible",
+    "cmake.showConfigureWithDebuggerNotification": false,
+    "cmake.generator": "Unix Makefiles",
+    "editor.fontFamily": "'Iosevka'",
+    "workbench.colorTheme": "Blowington Theme (Dark)"
+}
