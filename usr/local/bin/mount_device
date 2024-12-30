@@ -19,12 +19,23 @@ if mountpoint -q "$MOUNT_POINT"; then
     exit 1
 fi
 
+echo "Checking filesystem type for $PARTITION"
+FS_TYPE=$(sudo blkid -o value -s TYPE "$PARTITION")
+
+if [ -z "$FS_TYPE" ]; then
+    echo "Error: Could not determine filesystem type for $PARTITION"
+fi
+
 sudo mount -o uid=$(id -u),gid=$(id -g),umask=022 "$PARTITION" "$MOUNT_POINT"
 
-if [ $? -eq 0 ]; then
-    FS_TYPE=$(blkid -o value -s TYPE "$PARTITION")
-    echo "Mounted $PARTITION ($FS_TYPE) to $MOUNT_POINT successfully."
-else
-    echo "Failed to mount $PARTITION to $MOUNT_POINT."
+if [ $? -ne 0 ]; then
+    echo "Failed to mount $PARTITION."
     exit 1
+fi
+
+FS_TYPE=$(sudo blkid -o value -s TYPE "$PARTITION")
+if [ -z "$FS_TYPE" ]; then
+    echo "Error: Could not determine filesystem type for $PARTITION."
+else
+    echo "Mounted $PARTITION ($FS_TYPE) to $MOUNT_POINT successfully."
 fi

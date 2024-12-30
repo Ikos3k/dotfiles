@@ -42,6 +42,24 @@ if status is-interactive
 
     alias make-python-env="python3 -m venv my_env"
     alias activate-env="source my_env/bin/activate.fish"
+    alias cls="clear"
+    alias feh='feh --scale-down'
+
+    function ips
+        printf "%s\t%s\t%s\n" "NAME" "KIND" "IP ADDRESS"
+        ip -o addr show | while read -l line
+            set name (echo $line | awk "{print \$2}")
+            set kind (echo $line | awk "{print \$3}")
+            set ip (echo $line | awk "{print \$4}" | sed "s/\/.*//g")
+            printf "%s\t%s\t%s\n" "$name" "$kind" "$ip"
+        end
+    end
+    
+    function sinks
+        printf "%s\t%s\n" "TYPE" "DEVICE NAME"
+        pactl list short sinks | awk "/alsa_output|sink/ {printf \"OUTPUT\t%s\\n\", \$2}"
+        pactl list short sources | awk "/alsa_input|source/ {printf \"INPUT\t%s\\n\", \$2}"
+    end
 
     zoxide init fish | source
 end

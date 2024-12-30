@@ -22,6 +22,7 @@ HOME_FILES=(
     ".config/Kvantum/KvGnomeDark#/KvGnomeDark#.kvconfig"
     ".config/i3/config"
     ".config/xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml"
+    ".config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml"
     # ".config/Thunar/accels.scm"
     ".config/Thunar/uca.xml"
     ".config/alacritty/alacritty.toml"
@@ -48,6 +49,7 @@ SYSTEM_FILES=(
     "/etc/environment"
     "/usr/local/bin/unmount_device"
     "/usr/local/bin/mount_device"
+    "/usr/local/bin/check-hash"
 )
 
 PERMISSIONS_FILE="$DOTFILES_DIR/permissions.txt"

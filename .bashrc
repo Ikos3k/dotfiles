@@ -28,6 +28,13 @@ alias disks='lsblk -e7 -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT | while read -r line;
   fi; \
 done'
 
+# alias disks2='for disk in /dev/sd*; do \
+#   if [ -e "$disk" ]; then \
+#     echo "Disk: $disk"; \
+#     sudo parted $disk print; \
+#   fi; \
+# done'
+
 alias ips='printf "%s\t%s\t%s\n" "NAME" "KIND" "IP ADDRESS"; ip -o addr show | while read -r line; do \
   name=$(echo $line | awk "{print \$2}"); \
   kind=$(echo $line | awk "{print \$3}"); \
@@ -142,6 +149,12 @@ extract() {
             tar -xJf "$file"
             ;;
         zip)
+            unzip "$file"
+            ;;
+        AppxBundle)
+            unzip "$file"
+            ;;
+        appx)
             unzip "$file"
             ;;
         7z)

@@ -1,22 +1,60 @@
 #!/bin/bash
 
-eject-device() {
-    sync
-    echo "Ejecting the device $DEVICE..."
-    sudo eject "$DEVICE"
-    if [ $? -eq 0 ]; then
-        echo "Device $DEVICE ejected successfully."
+check-disk-busy() {
+    echo "Checking if $MOUNT_POINT is busy..."
+    lsof +f -- "$MOUNT_POINT" > /tmp/disk_busy_check.log
+    if [ -s /tmp/disk_busy_check.log ]; then
+        echo "The following processes are using $MOUNT_POINT:"
+        cat /tmp/disk_busy_check.log
+        read -p "Do you want to force unmount the device? [y/N]: " FORCE_UNMOUNT
+        case "$FORCE_UNMOUNT" in
+            [yY][eE][sS]|[yY])
+                sudo umount -l "$MOUNT_POINT"
+                if [ $? -eq 0 ]; then
+                    echo "$MOUNT_POINT forcefully unmounted successfully."
+                else
+                    echo "Failed to forcefully unmount $MOUNT_POINT."
+                    exit 1
+                fi
+                ;;
+            *)
+                echo "Unmount canceled. Resolve the busy processes and try again."
+                exit 1
+                ;;
+        esac
     else
-        echo "Failed to eject $DEVICE. Continuing with power-off."
+        echo "$MOUNT_POINT is not busy. Proceeding to unmount."
     fi
 }
 
+eject-device() {
+    DEVICE=$1
+    read -p "Do you want to eject $DEVICE? [y/N]: " CONFIRM_EJECT
+    case "$CONFIRM_EJECT" in
+        [yY][eE][sS]|[yY])
+            sync
+            echo "Ejecting $DEVICE..."
+            sudo eject "$DEVICE"
+            if [ $? -eq 0 ]; then
+                echo "Device $DEVICE ejected successfully."
+            else
+                echo "Failed to eject $DEVICE."
+            fi
+            ;;
+        *)
+            echo "Skipped ejecting $DEVICE."
+            ;;
+    esac
+}
+
 power-off-device() {
-    eject-device
+    DEVICE=$1
+    eject-device "$DEVICE"
     sync
     read -p "Do you want to power off the device $DEVICE? [y/N]: " CONFIRM
     case "$CONFIRM" in
         [yY][eE][sS]|[yY])
+            echo "Powering off $DEVICE..."
             sudo udisksctl power-off -b "$DEVICE"
             if [ $? -eq 0 ]; then
                 echo "Device $DEVICE powered off successfully."
@@ -59,7 +97,7 @@ echo "Device detected: $DEVICE"
 
 if ! grep -q "$PARTITION" /proc/mounts; then
     echo "Partition $PARTITION is not mounted."
-    power-off-device
+    power-off-device "$DEVICE"
     exit 1
 fi
 
@@ -69,9 +107,10 @@ if [ -n "$MOUNT_POINT" ] && ! mountpoint -q "$MOUNT_POINT"; then
 fi
 
 sync
+check-disk-busy
 if sudo umount "$MOUNT_POINT"; then
     echo "Unmounted $MOUNT_POINT successfully."
-    power-off-device
+    power-off-device "$DEVICE"
 else
     echo "Failed to unmount $MOUNT_POINT."
     exit 1
