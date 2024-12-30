@@ -13,6 +13,8 @@ exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 exec --no-startup-id nm-applet
 
+exec --no-startup-id sh -c "pkill plasma_waitforname; pkill gnome-shell; killall dunst; dunst"
+
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
 bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && $refresh_i3status && bash scripts/volume.sh
@@ -171,7 +173,6 @@ bar {
        }
 }
 
-# <colorclass> <border> <background> <text> <indicator> <child_border>
 # class                 border   backgr.  text    indicator child_border
 client.focused          #333333  #000000  #ffffff  #ffffff   #000000
 client.focused_inactive #000000  #333333  #ffffff  #ffffff   #333333

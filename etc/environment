@@ -6,3 +6,4 @@
 RADV_PERFTEST=aco
 mesa_glthread=true
 QT_QPA_PLATFORMTHEME=qt6ct
+MANGOHUD=1

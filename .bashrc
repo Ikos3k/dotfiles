@@ -55,7 +55,7 @@ alias files='ls | wc -l'
 
 alias cls='clear'
 alias reload='source ~/.bashrc'
-alias end='shutdown now'
+alias end='systemctl poweroff'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias back='cd -'

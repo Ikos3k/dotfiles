@@ -16,6 +16,7 @@ HOME_FILES=(
     ".Xresources"
     ".zshrc"
     ".gtkrc-2.0"
+    ".npmrc"
     ".config/gtk-3.0/settings.ini"
     ".config/qt6ct/qt6ct.conf"
     ".config/Kvantum/kvantum.kvconfig"
@@ -37,10 +38,14 @@ HOME_FILES=(
     ".config/sunshine/sunshine.conf"
     ".config/VSCodium/User/settings.json"
     ".config/bottom/bottom.toml"
+    ".config/MangoHud/MangoHud.conf"
+    ".config/ranger/rc.conf"
+    ".config/katerc"
     "scripts/volume.sh"
     "scripts/switch_audio_out.sh"
     "scripts/fix_nameserver.sh"
     "scripts/open_website.sh"
+    "scripts/service_manager.sh"
     "scripts/Linux-Gaming"
 )
 
@@ -49,7 +54,7 @@ SYSTEM_FILES=(
     "/etc/environment"
     "/usr/local/bin/unmount_device"
     "/usr/local/bin/mount_device"
-    "/usr/local/bin/check-hash"
+    "/usr/local/bin/check_hash"
 )
 
 PERMISSIONS_FILE="$DOTFILES_DIR/permissions.txt"

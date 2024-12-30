@@ -2,4 +2,4 @@
 /etc/environment 644
 /usr/local/bin/unmount_device 755
 /usr/local/bin/mount_device 755
-/usr/local/bin/check-hash 755
+/usr/local/bin/check_hash 755
