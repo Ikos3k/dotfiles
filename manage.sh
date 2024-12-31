@@ -52,6 +52,7 @@ HOME_FILES=(
 SYSTEM_FILES=(
     "/etc/i3status.conf"
     "/etc/environment"
+    "/etc/default/grub"
     "/usr/local/bin/unmount_device"
     "/usr/local/bin/mount_device"
     "/usr/local/bin/check_hash"
