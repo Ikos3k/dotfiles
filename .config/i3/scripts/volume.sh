@@ -2,7 +2,7 @@
 
 VOLUME=$(pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '[0-9]+(?=%)' | head -1)
 MUTED=$(pactl get-sink-mute @DEFAULT_SINK@ | grep -oP '(?<=Mute: )\w+')
-URGENCY="low"
+URGENCY="normal"
 
 if [ "$MUTED" = "yes" ]; then
     bar="?   Mute"
@@ -27,12 +27,12 @@ else
         bar="${bar} ○"
     done
     bar="${bar} (${VOLUME}%)"
-    
+
     if [ "$VOLUME" -gt 100 ]; then
         URGENCY="critical"
     fi
 fi
 
 # dunstify "$bar" -u $URGENCY -t 1000 -h int:value:"$VOLUME" -h string:synchronous:"$bar" --replace=555
-dunstify "$bar" -u $URGENCY -t 1000  --replace=555
-# pkill dunst && dunst &
+# dunstify "$bar" -u $URGENCY -t 1000  --replace=555
+notify-send "$bar" -u $URGENCY -t 1000 -r 555

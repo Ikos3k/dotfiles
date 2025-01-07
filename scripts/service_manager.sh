@@ -14,6 +14,8 @@ declare -a services=(
     "mysql"
     "bluetooth"
     "NetworkManager"
+    "dnsmasq"
+    "polkit"
 )
 
 get_all_services() {

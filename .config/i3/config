@@ -1,7 +1,12 @@
 set $mod Mod1
 
-# font pango:monospace 8
 font pango:Iosevka 10
+
+# exec --no-startup-id picom
+exec_always --no-startup-id pkill -x picom; sleep 0.5; picom
+# $ rm /etc/xdg/autostart/picom.desktop
+
+# exec --no-startup-id /usr/lib/xfce-polkit/xfce-polkit &
 
 # Start XDG autostart .desktop files using dex. See also
 # https://wiki.archlinux.org/index.php/XDG_Autostart
@@ -13,17 +18,14 @@ exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 exec --no-startup-id nm-applet
 
-exec --no-startup-id sh -c "pkill plasma_waitforname; pkill gnome-shell; killall dunst; dunst"
-
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && $refresh_i3status && bash scripts/volume.sh
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5% && $refresh_i3status && bash scripts/volume.sh
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status && bash scripts/volume.sh
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5% && $refresh_i3status && bash ~/.config/i3/scripts/volume.sh
+bindsym Shift+XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +1% && $refresh_i3status && bash ~/.config/i3/scripts/volume.sh
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5% && $refresh_i3status && bash ~/.config/i3/scripts/volume.sh
+bindsym Shift+XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -1% && $refresh_i3status && bash ~/.config/i3/scripts/volume.sh
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status && bash ~/.config/i3/scripts/volume.sh
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
-
-bindsym Shift+XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +1% && $refresh_i3status && bash scripts/volume.sh
-bindsym Shift+XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -1% && $refresh_i3status && bash scripts/volume.sh
 
 floating_modifier $mod
 tiling_drag off
@@ -127,8 +129,9 @@ bindsym $mod+Shift+0 move container to workspace number $ws10
 bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
+# bindsym --release $mod+Shift+l exec "slock"
 
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3 or shut down the PC?' -B 'Shut down PC' 'systemctl poweroff' -B 'Exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Do you really want to exit i3?' -B 'shut down' 'systemctl poweroff' -B 'reboot' 'systemctl reboot' -B 'exit' 'i3-msg exit'"
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -184,13 +187,18 @@ client.background       #000000
 hide_edge_borders both
 # focus_follows_mouse no
 
+for_window [class="st"] border none
+
 for_window [class="steam_proton"] floating enable
 for_window [class=".*\.exe"] floating enable
-
 for_window [class="pavucontrol"] floating enable
+# for_window [class=".*"] floating enable
+for_window [floating] move position center
+
+exec_always --no-startup-id sh -c "pkill plasma_waitforname; pkill gnome-shell; killall dunst; dunst"
+exec --no-startup-id xsetroot -solid black
 
 bindsym $mod+a exec --no-startup-id ~/scripts/open_website.sh
 bindsym Print exec flameshot full --clipboard
 bindsym Mod4+Print exec flameshot full --path ~/Pictures/
-bindsym --release $mod+Shift+l exec "slock"
 bindsym $mod+n bar mode toggle

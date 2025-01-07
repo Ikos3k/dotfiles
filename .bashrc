@@ -78,6 +78,14 @@ alias fetch='git fetch'
 alias fetch-pulls='function pull-req() { git fetch --depth 1 origin "refs/pull/*:refs/remotes/origin/pull/*"; }; pull-req'
 alias fetch-open-pulls='function pull-oreq() { git fetch --depth 1 origin "refs/pull/*:refs/remotes/origin/pull/*"; }; pull-oreq'
 
+clone_branch() {
+    if [ $# -ne 2 ]; then
+        echo "Usage: clone_branch <repository_url> <branch_name>"
+        return 1
+    fi
+    git clone --depth=1 --branch "$2" "$1"
+}
+
 # pacman
 alias i='sudo pacman -S'
 alias ifile='sudo pacman -U'
