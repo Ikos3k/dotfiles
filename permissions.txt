@@ -1,6 +1,8 @@
 /etc/i3status.conf 755
 /etc/environment 644
 /etc/default/grub 644
+/etc/polkit-1/rules.d/10-udiskie.rules 644
+/etc/polkit-1/rules.d/50-udiskie.rules 644
 /usr/local/bin/unmount_device 755
 /usr/local/bin/mount_device 755
 /usr/local/bin/check_hash 755
