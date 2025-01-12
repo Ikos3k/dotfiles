@@ -4,6 +4,8 @@ declare -A websites
 websites=(
     ["google"]="https://www.google.com"
     ["chatgpt"]="https://chatgpt.com"
+    ["deepseek"]="https://chat.deepseek.com/"
+    ["duck.ai"]="https://duck.ai/"
     ["github"]="https://www.github.com"
     ["reddit"]="https://www.reddit.com"
     ["youtube"]="https://www.youtube.com"
