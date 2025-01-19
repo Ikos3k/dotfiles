@@ -191,7 +191,10 @@ for_window [class="st"] border none
 
 for_window [class="steam_proton"] floating enable
 for_window [class=".*\.exe"] floating enable
+
 for_window [class="pavucontrol"] floating enable
+for_window [class="vncviewer"] floating enable
+
 # for_window [class=".*"] floating enable
 for_window [floating] move position center
 

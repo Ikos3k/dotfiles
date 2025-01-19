@@ -60,6 +60,7 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias back='cd -'
 alias ??='echo $?'
+alias update-grub='sudo grub-mkconfig -o /boot/grub/grub.cfg'
 
 alias myip="curl ipinfo.io/ip; echo"
 alias localip="ip a | grep inet | grep -v inet6 | grep -v '127.0.0.1' | awk '{print \$2}' | cut -d/ -f1"
@@ -67,6 +68,11 @@ alias localip="ip a | grep inet | grep -v inet6 | grep -v '127.0.0.1' | awk '{pr
 alias cleanupall='sudo pacman -Sc && yay -Sc && sudo journalctl --vacuum-time=2weeks'
 alias fs='stat --printf="%s bytes\n"'
 alias wipehist='history -c && history -w'
+
+# makepkg
+alias mkpkg="makepkg -f"
+alias mkpkg-install="makepkg -f && makepkg --install"
+alias mkpkg-clean="makepkg -c"
 
 # git
 alias g='git'
@@ -118,6 +124,7 @@ mkv_to_mp4() {
     echo "Conversion complete: $output_file"
 }
 
+
 dl() {
     if [ -z "$1" ]; then
         echo "Usage: dl <URL> [filename]"
@@ -128,9 +135,9 @@ dl() {
     local filename="$2"
 
     if [ -z "$filename" ]; then
-        wget --progress=bar:force -c "$url"
+        wget --user-agent="Mozilla/5.0" --progress=bar:force -c "$url"
     else
-        wget --progress=bar:force -c -O "$filename" "$url"
+        wget --user-agent="Mozilla/5.0" --progress=bar:force -c -O "$filename" "$url"
     fi
 }
 

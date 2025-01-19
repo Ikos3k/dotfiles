@@ -5,6 +5,7 @@
     "autoindent": false,
     "colorscheme": "twilight",
     "indentchar": ".",
+    "mkparents": true,
     "relativeruler": true,
     "tabhighlight": true,
     "tabstospaces": true
