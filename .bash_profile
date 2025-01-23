@@ -34,3 +34,6 @@ export ANDROID_NDK_HOME=~/Android/ndk
 #         exec startx
 #     fi
 # fi
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/ikos3k/.lmstudio/bin"

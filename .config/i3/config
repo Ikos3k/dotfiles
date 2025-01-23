@@ -199,9 +199,11 @@ for_window [class="vncviewer"] floating enable
 for_window [floating] move position center
 
 exec_always --no-startup-id sh -c "pkill plasma_waitforname; pkill gnome-shell; killall dunst; dunst"
-exec --no-startup-id xsetroot -solid black
 
 bindsym $mod+a exec --no-startup-id ENABLE_CATEGORIES=1 ~/.config/i3/scripts/open_website.sh dmenu # rofi
 bindsym Print exec flameshot full --clipboard
 bindsym Mod4+Print exec flameshot full --path ~/Pictures/
 bindsym $mod+n bar mode toggle
+
+exec --no-startup-id xsetroot -solid black
+# exec_always --no-startup-id feh --bg-fill "$(find $HOME/.config/i3/wallpapers -type f | shuf -n 1)"

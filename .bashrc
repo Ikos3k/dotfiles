@@ -143,43 +143,47 @@ dl() {
 
 extract() {
     if [ -z "$1" ]; then
-        echo "Usage: extract <archive_file>"
+        echo "Usage: extract <archive_file> [destination_directory]"
         return 1
     fi
 
     local file="$1"
+    local dest="${2:-.}"
     local extension="${file##*.}"
+    local filename=$(basename "$file" ".$extension")
+
+    if [ ! -f "$file" ]; then
+        echo "Error: File '$file' does not exist."
+        return 1
+    fi
 
     case "$extension" in
         tar)
-            tar -xf "$file"
+            tar -xf "$file" -C "$dest"
             ;;
         gz | tgz)
-            tar -xzf "$file"
+            tar -xzf "$file" -C "$dest"
             ;;
         bz2 | tbz2)
-            tar -xjf "$file"
+            tar -xjf "$file" -C "$dest"
             ;;
         xz | txz)
-            tar -xJf "$file"
+            tar -xJf "$file" -C "$dest"
             ;;
-        zip)
-            unzip "$file"
+        lzma)
+            unlzma -c "$file" | tar -xf - -C "$dest"
             ;;
-        AppxBundle)
-            unzip "$file"
+        zst)
+            unzstd -c "$file" | tar -xf - -C "$dest"
             ;;
-        appx)
-            unzip "$file"
+        zip | apk | AppxBundle | appx)
+            unzip "$file" -d "$dest"
             ;;
-        7z)
-            7z x "$file"
-            ;;
-        iso)
-            7z x "$file"
+        7z | iso)
+            7z x "$file" -o"$dest"
             ;;
         rar)
-            unrar x "$file"
+            unrar x "$file" "$dest"
             ;;
         *)
             echo "Unsupported file type: $extension"
@@ -288,3 +292,6 @@ else
 fi)'
 
 eval "$(zoxide init bash)"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/ikos3k/.lmstudio/bin"

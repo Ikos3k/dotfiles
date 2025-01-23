@@ -1,5 +1,4 @@
-TerminalEmulator=alacritty
+TerminalEmulator=st
 TerminalEmulatorDismissed=true
 WebBrowser=chromium
 FileManager=thunar
-
