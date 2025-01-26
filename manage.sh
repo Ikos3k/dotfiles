@@ -17,7 +17,7 @@ HOME_FILES=(
     ".zshrc"
     ".gtkrc-2.0"
     ".npmrc"
-    ".dwm/"
+    ".dwm"
     ".config/gtk-3.0/settings.ini"
     ".config/gtk-4.0/settings.ini"
     ".config/qt6ct/qt6ct.conf"
@@ -25,7 +25,7 @@ HOME_FILES=(
     ".config/Kvantum/KvGnomeDark#/KvGnomeDark#.kvconfig"
     ".config/picom.conf"
     ".config/i3/config"
-    ".config/i3/scripts/"
+    ".config/i3/scripts"
     ".config/flameshot/flameshot.ini"
     ".config/xfce4/xfconf/xfce-perchannel-xml/xfce4-terminal.xml"
     ".config/xfce4/xfconf/xfce-perchannel-xml/thunar.xml"
@@ -115,7 +115,7 @@ backup_dotfiles() {
                 fi
 
                 if [ "$SHOW_DIFFS" -eq 1 ]; then
-                    if [ ! -f "$TARGET_FILE" ]; then
+                    if [ ! -e "$TARGET_FILE" ]; then
                         echo "[!!!] $RELATIVE_FILE does not exist in the backup directory. It will be backed up for the first time."
                     fi
                     if [ -f "$TARGET_FILE" ]; then

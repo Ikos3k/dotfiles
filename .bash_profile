@@ -6,12 +6,11 @@
 
 export MICRO_TRUECOLOR=0
 export TERM=xterm-256color
-export EDITOR=/usr/bin/micro
 export COLORTERM=truecolor
-export TERMINAL=/usr/bin/alacritty
+export TERMINAL=st
+export EDITOR=micro
 export PAGER=less
 export BROWSER=chromium
-export PATH="~/my_msvc/bin/:~/.cargo/bin:$PATH"
 
 # sudo archlinux-java set java-17-openjdk
 # sudo archlinux-java set java-11-openjdk
@@ -35,5 +34,7 @@ export ANDROID_NDK_HOME=~/Android/ndk
 #     fi
 # fi
 
+export BUN_INSTALL="$HOME/.bun"
+
 # Added by LM Studio CLI (lms)
-export PATH="$PATH:/home/ikos3k/.lmstudio/bin"
+export PATH="$PATH:$HOME/my_msvc/bin/:$HOME/.cargo/bin:$HOME/.lmstudio/bin:$BUN_INSTALL/bin"
