@@ -34,5 +34,4 @@ else
 fi
 
 # dunstify "$bar" -u $URGENCY -t 1000 -h int:value:"$VOLUME" -h string:synchronous:"$bar" --replace=555
-# dunstify "$bar" -u $URGENCY -t 1000  --replace=555
 notify-send "$bar" -u $URGENCY -t 1000 -r 555

@@ -68,7 +68,6 @@ PERMISSIONS_FILE="$DOTFILES_DIR/permissions.txt"
 backup_dotfiles() {
     local SHOW_DIFFS=0
     local SAFE_MODE=0
-    local USE_LINKS=0
 
     for ARG in "$@"; do
         case "$ARG" in
@@ -87,7 +86,7 @@ backup_dotfiles() {
         esac
     done
 
-    echo "Executing backup with options: -diff=$SHOW_DIFFS, -safe=$SAFE_MODE, -link=$USE_LINKS"
+    echo "Executing backup with options: -diff=$SHOW_DIFFS, -safe=$SAFE_MODE"
 
     if [ -n "$SUDO_USER" ]; then
         USER_HOME=$(eval echo ~$SUDO_USER)
@@ -98,8 +97,9 @@ backup_dotfiles() {
 
     echo "Backing up home directory dotfiles from $USER_HOME to $DOTFILES_DIR..."
     > "$PERMISSIONS_FILE"
+    shopt -s nullglob
     for FILE_PATTERN in "${HOME_FILES[@]}"; do
-        for FILE in "$USER_HOME/$FILE_PATTERN"; do
+        for FILE in "$USER_HOME"/$FILE_PATTERN; do
             if [ -e "$FILE" ]; then
                 RELATIVE_FILE="${FILE#$USER_HOME/}"
                 TARGET_FILE="$DOTFILES_DIR/$RELATIVE_FILE"
@@ -130,20 +130,31 @@ backup_dotfiles() {
                     read -p "Do you want to backup $RELATIVE_FILE? [y/N] " answer
                     case "$answer" in
                         [yY][eE][sS]|[yY])
-                            cp -r "$FILE" "$TARGET_FILE"
+                            if [ -d "$FILE" ]; then
+                                mkdir -p "$TARGET_FILE"
+                                cp -r "$FILE"/. "$TARGET_FILE"
+                            else
+                                cp -r "$FILE" "$TARGET_FILE"
+                            fi
                             ;;
                         *)
                             echo "Skipped backing up $RELATIVE_FILE"
                             ;;
                     esac
                 else
-                    cp -r "$FILE" "$TARGET_FILE"
+                    if [ -d "$FILE" ]; then
+                        mkdir -p "$TARGET_FILE"
+                        cp -r "$FILE"/. "$TARGET_FILE"
+                    else
+                        cp -r "$FILE" "$TARGET_FILE"
+                    fi
                 fi
             else
-                echo "[!!] No existing $FILE found in home directory."
+                echo "[!!] No existing $FILE_PATTERN found in home directory."
             fi
         done
     done
+    shopt -u nullglob
 
     echo "Backing up system-wide configuration files to $DOTFILES_DIR..."
     for FILE in "${SYSTEM_FILES[@]}"; do
@@ -181,7 +192,7 @@ backup_dotfiles() {
                         cp -r "$FILE" "$TARGET_FILE"
                         ;;
                     *)
-                        echo "Skipped backing up $RELATIVE_FILE"
+                        echo "Skipped backing up $FILE"
                         ;;
                 esac
             else
@@ -190,16 +201,12 @@ backup_dotfiles() {
 
             FILE_PERMISSIONS=$(stat -c "%a" "$FILE")
             echo "$FILE $FILE_PERMISSIONS" >> "$PERMISSIONS_FILE"
-            cp -r "$FILE" "$TARGET_FILE"
-
-            chown -R "$SUDO_USER:$SUDO_USER" "$DOTFILES_DIR/$(dirname "$RELATIVE_PATH")"
-            chown "$SUDO_USER:$SUDO_USER" "$TARGET_FILE"
         else
             echo "[!!] No existing $FILE found in the system."
         fi
     done
-    
-    chown -R "$SUDO_USER:$SUDO_USER" "$(dirname "$PERMISSIONS_FILE")"
+
+    chown -R "$SUDO_USER:$SUDO_USER" "$DOTFILES_DIR"
     chown "$SUDO_USER:$SUDO_USER" "$PERMISSIONS_FILE"
     echo "Backup complete!"
 }
@@ -239,15 +246,47 @@ restore_dotfiles() {
     fi
 
     echo "Restoring home directory dotfiles from $DOTFILES_DIR to $USER_HOME..."
+    shopt -s nullglob
     for FILE_PATTERN in "${HOME_FILES[@]}"; do
         for FILE in "$DOTFILES_DIR/$FILE_PATTERN"; do
             if [ -e "$FILE" ]; then
                 RELATIVE_FILE="${FILE#$DOTFILES_DIR/}"
                 TARGET_FILE="$USER_HOME/$RELATIVE_FILE"
 
-                if [ -L "$TARGET_FILE" ]; then
-                    echo "Removing symlink for $RELATIVE_FILE"
-                    rm "$TARGET_FILE"
+                if [ -e "$TARGET_FILE" ]; then
+                    if [ -L "$TARGET_FILE" ]; then
+                        echo "Removing existing symlink for $RELATIVE_FILE"
+                        rm "$TARGET_FILE"
+                    else
+                        if [ "$USE_LINKS" -eq 1 ]; then
+                            if [ "$SAFE_MODE" -eq 1 ]; then
+                                read -p "$TARGET_FILE exists. Replace with symlink? [y/N] " answer
+                                case "$answer" in
+                                    [yY][eE][sS]|[yY])
+                                        BACKUP_FILE="${TARGET_FILE}.bak"
+                                        if [ -e "$BACKUP_FILE" ]; then
+                                            echo "Backup file $BACKUP_FILE already exists. Skipping."
+                                            continue
+                                        fi
+                                        mv "$TARGET_FILE" "$BACKUP_FILE"
+                                        echo "Backed up existing $TARGET_FILE to $BACKUP_FILE"
+                                        ;;
+                                    *)
+                                        echo "Skipped restoring $RELATIVE_FILE due to existing file/directory."
+                                        continue
+                                        ;;
+                                esac
+                            else
+                                BACKUP_FILE="${TARGET_FILE}.bak"
+                                if [ -e "$BACKUP_FILE" ]; then
+                                    echo "Backup file $BACKUP_FILE already exists. Skipping."
+                                    continue
+                                fi
+                                mv "$TARGET_FILE" "$BACKUP_FILE"
+                                echo "Backed up existing $TARGET_FILE to $BACKUP_FILE"
+                            fi
+                        fi
+                    fi
                 fi
 
                 if [ "$SHOW_DIFFS" -eq 1 ] && [ -f "$TARGET_FILE" ]; then
@@ -274,7 +313,12 @@ restore_dotfiles() {
                                     ln -sf "$FILE" "$TARGET_FILE"
                                     echo "Symlink created: $TARGET_FILE -> $FILE"
                                 else
-                                    cp -r "$FILE" "$TARGET_FILE"
+                                    if [ -d "$FILE" ]; then
+                                        mkdir -p "$TARGET_FILE"
+                                        cp -r "$FILE"/. "$TARGET_FILE"
+                                    else
+                                        cp -r "$FILE" "$TARGET_FILE"
+                                    fi
                                 fi
                                 ;;
                             *)
@@ -288,23 +332,60 @@ restore_dotfiles() {
                             ln -sf "$FILE" "$TARGET_FILE"
                             echo "Symlink created: $TARGET_FILE -> $FILE"
                         else
-                            cp -r "$FILE" "$TARGET_FILE"
+                            if [ -d "$FILE" ]; then
+                                mkdir -p "$TARGET_FILE"
+                                cp -r "$FILE"/. "$TARGET_FILE"
+                            else
+                                cp -r "$FILE" "$TARGET_FILE"
+                            fi
                         fi
                     fi
                 fi
             else
-                echo "No $FILE found in $DOTFILES_DIR."
+                echo "No $FILE_PATTERN found in $DOTFILES_DIR."
             fi
         done
     done
+    shopt -u nullglob
 
     echo "Restoring system-wide configuration files from $DOTFILES_DIR..."
     for FILE in "${SYSTEM_FILES[@]}"; do
         RELATIVE_PATH="${FILE#/}"
         if [ -f "$DOTFILES_DIR/$RELATIVE_PATH" ]; then
-            if [ -L "$FILE" ]; then
-                echo "Removing symlink for $RELATIVE_PATH"
-                rm "$FILE"
+            if [ -e "$FILE" ]; then
+                if [ -L "$FILE" ]; then
+                    echo "Removing existing symlink for $FILE"
+                    rm "$FILE"
+                else
+                    if [ "$USE_LINKS" -eq 1 ]; then
+                        if [ "$SAFE_MODE" -eq 1 ]; then
+                            read -p "$FILE exists. Replace with symlink? [y/N] " answer
+                            case "$answer" in
+                                [yY][eE][sS]|[yY])
+                                    BACKUP_FILE="${FILE}.bak"
+                                    if [ -e "$BACKUP_FILE" ]; then
+                                        echo "Backup file $BACKUP_FILE already exists. Skipping."
+                                        continue
+                                    fi
+                                    mv "$FILE" "$BACKUP_FILE"
+                                    echo "Backed up existing $FILE to $BACKUP_FILE"
+                                    ;;
+                                *)
+                                    echo "Skipped restoring $FILE due to existing file/directory."
+                                    continue
+                                    ;;
+                            esac
+                        else
+                            BACKUP_FILE="${FILE}.bak"
+                            if [ -e "$BACKUP_FILE" ]; then
+                                echo "Backup file $BACKUP_FILE already exists. Skipping."
+                                continue
+                            fi
+                            mv "$FILE" "$BACKUP_FILE"
+                            echo "Backed up existing $FILE to $BACKUP_FILE"
+                        fi
+                    fi
+                fi
             fi
 
             if [ "$SHOW_DIFFS" -eq 1 ] && [ -f "$FILE" ]; then
@@ -314,7 +395,7 @@ restore_dotfiles() {
                 fi
             else
                 if [ ! -f "$FILE" ]; then
-                    echo "[!!] The file $RELATIVE_FILE did not exist on the system before, restoring it now."
+                    echo "[!!] The file $FILE did not exist on the system before, restoring it now."
                 fi
             fi
 
@@ -322,7 +403,7 @@ restore_dotfiles() {
                 echo "$RELATIVE_PATH is identical to the system file. Skipping restore."
             else
                 if [ "$SAFE_MODE" -eq 1 ]; then
-                    read -p "Do you want to restore $RELATIVE_PATH? [y/N] " answer
+                    read -p "Do you want to restore $FILE? [y/N] " answer
                     case "$answer" in
                         [yY])
                             echo "Restoring $RELATIVE_PATH to $FILE"

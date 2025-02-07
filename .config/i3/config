@@ -194,7 +194,7 @@ for_window [class="steam_proton"] floating enable
 for_window [class=".*\.exe"] floating enable
 
 for_window [class="pavucontrol"] floating enable
-for_window [class="vncviewer"] floating enable
+for_window [class="Vncviewer"] floating enable
 
 # for_window [class=".*"] floating enable
 for_window [floating] move position center
@@ -207,4 +207,6 @@ bindsym Mod4+Print exec flameshot full --path ~/Pictures/
 bindsym Shift+Print exec flameshot gui
 
 exec --no-startup-id xsetroot -solid black
+exec_always --no-startup-id xrandr --output DisplayPort-0 --brightness 1 --gamma 1.1:1:0.7
+
 # exec_always --no-startup-id feh --bg-fill "$(find $HOME/.config/i3/wallpapers -type f | shuf -n 1)"

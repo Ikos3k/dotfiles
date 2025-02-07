@@ -1,5 +1,8 @@
 #!/bin/bash
 
+DMENU_ORIENTATION=${DMENU_ORIENTATION:-vertical}
+ENABLE_CATEGORIES=${ENABLE_CATEGORIES:-1}
+
 declare -A categories
 categories=(
     ["AI"]="chatgpt deepseek duck.ai"
@@ -28,7 +31,13 @@ websites=(
 if [[ "$1" == "rofi" ]]; then
     command="rofi -dmenu -theme ~/.config/rofi/mytheme.rasi"
 else
-    command='dmenu -nb #1e1e1e -sf #1e1e1e -sb #f4800d -nf #F4800d'
+	if [[ "$DMENU_ORIENTATION" == "horizontal" ]]; then
+        dmenu_cmd='dmenu -l 10 -nb #1e1e1e -sf #1e1e1e -sb #f4800d -nf #F4800d'
+    else
+        dmenu_cmd='dmenu -nb #1e1e1e -sf #1e1e1e -sb #f4800d -nf #F4800d'
+    fi
+    command="${dmenu_cmd}"
+    # command="i3-dmenu-desktop --entry-type=filename --dmenu='${dmenu_cmd}'"
 fi
 
 if [[ "$ENABLE_CATEGORIES" -eq 1 ]]; then
@@ -39,12 +48,12 @@ if [[ "$ENABLE_CATEGORIES" -eq 1 ]]; then
         website=$(echo "$websites_in_category" | tr ' ' '\n' | $command -p "Select website in $category:")
 
         if [ -n "$website" ]; then
-            chromium --new-window "${websites[$website]}" &
+            $BROWSER --new-window "${websites[$website]}" &
         fi
     fi
 else
     website=$(printf "%s\n" "${!websites[@]}" | $command -p "Select website:")
     if [ -n "$website" ]; then
-        chromium --new-window "${websites[$website]}" &
+        $BROWSER --new-window "${websites[$website]}" &
     fi
 fi
