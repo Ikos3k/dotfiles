@@ -36,7 +36,7 @@ bindsym $mod+Return exec st
 bindsym $mod+Shift+q kill
 
 bindsym $mod+x exec --no-startup-id dmenu_run -l 10 -fn 'Iosevkasa'
-bindsym $mod+d exec --no-startup-id i3-dmenu-desktop --entry-type=filename --dmenu='dmenu -l 10 -fn "Iosevkasa"'
+bindsym $mod+d exec --no-startup-id i3-dmenu-desktop --entry-type=filename --dmenu='dmenu -l 10 -nb #1e1e1e -sf #bdb9b9 -sb #181818 -nf #ffffff'
 
 # change focus
 bindsym $mod+j focus left
