@@ -27,6 +27,11 @@ bindsym Shift+XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @D
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status && bash ~/.config/i3/scripts/volume.sh
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
+bindsym XF86MonBrightnessUp exec --no-startup-id $refresh_i3status && bash ~/.config/i3/scripts/backlight.sh
+bindsym Shift+XF86MonBrightnessUp exec --no-startup-id $refresh_i3status && bash ~/.config/i3/scripts/backlight.sh
+bindsym XF86MonBrightnessDown exec --no-startup-id $refresh_i3status && bash ~/.config/i3/scripts/backlight.sh
+bindsym Shift+XF86MonBrightnessDown exec --no-startup-id $refresh_i3status && bash ~/.config/i3/scripts/backlight.sh
+
 floating_modifier $mod
 tiling_drag off
 
@@ -188,11 +193,10 @@ hide_edge_borders both
 # focus_follows_mouse no
 bindsym $mod+n bar mode toggle
 
-for_window [class="st"] border none
-
 for_window [class="steam_proton"] floating enable
 for_window [class=".*\.exe"] floating enable
 
+for_window [class="st"] floating enable
 for_window [class="pavucontrol"] floating enable
 for_window [class="Vncviewer"] floating enable
 
@@ -205,6 +209,9 @@ bindsym $mod+a exec --no-startup-id ENABLE_CATEGORIES=1 ~/.config/i3/scripts/ope
 bindsym Print exec flameshot full --clipboard
 bindsym Mod4+Print exec flameshot full --path ~/Pictures/
 bindsym Shift+Print exec flameshot gui
+
+exec --no-startup-id xinput set-prop "SynPS/2 Synaptics TouchPad" "libinput Tapping Enabled" 1
+# exec --no-startup-id discord --start-minimized &
 
 exec --no-startup-id xsetroot -solid black
 exec_always --no-startup-id xrandr --output DisplayPort-0 --brightness 1 --gamma 1.1:1:0.7
