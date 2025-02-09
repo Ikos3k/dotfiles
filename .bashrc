@@ -16,6 +16,7 @@ alias ll='ls -alF'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias feh='feh --scale-down'
+alias bat='bat --theme=1337'
 
 alias disks='lsblk -e7 -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT | while read -r line; do \
   disk=$(echo $line | awk "{print \$1}"); \
