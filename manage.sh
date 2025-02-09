@@ -56,6 +56,7 @@ SYSTEM_FILES=(
     "/etc/i3status.conf"
     "/etc/environment"
     "/etc/default/grub"
+    "/etc/systemd/logind.conf"
     "/etc/polkit-1/rules.d/10-udiskie.rules"
     "/etc/polkit-1/rules.d/50-udiskie.rules"
     "/usr/local/bin/unmount_device"
