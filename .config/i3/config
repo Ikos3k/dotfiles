@@ -1,6 +1,14 @@
 set $mod Mod1
 
-font pango:Iosevka 10
+#font padsango:Iosevka 10
+
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
+#font pango:monospace 8
+
+# This font is widely installed, provides lots of unicode glyphs, right-to-left
+# text rendering and scalability on retina/hidpi displays (thanks to pango).
+font pango:DejaVu Sans Mono 8
 
 # exec --no-startup-id picom
 exec_always --no-startup-id pkill -x picom; sleep 0.5; picom
@@ -41,7 +49,7 @@ bindsym $mod+Return exec st
 bindsym $mod+Shift+q kill
 
 bindsym $mod+x exec --no-startup-id dmenu_run -l 10 -fn 'Iosevkasa'
-bindsym $mod+d exec --no-startup-id i3-dmenu-desktop --entry-type=filename --dmenu='dmenu -l 10 -nb #1e1e1e -sf #bdb9b9 -sb #181818 -nf #ffffff'
+bindsym $mod+d exec --no-startup-id i3-dmenu-desktop --entry-type=filename --dmenu='dmenu -l 10 -nb #000000 -sf #bdb9b9 -sb #181818 -nf #ffffff'
 
 # change focus
 bindsym $mod+j focus left
@@ -193,15 +201,18 @@ hide_edge_borders both
 # focus_follows_mouse no
 bindsym $mod+n bar mode toggle
 
+for_window [class="org.ppsspp.PPSSPP"] floating enable
 for_window [class="steam_proton"] floating enable
 for_window [class=".*\.exe"] floating enable
 
-for_window [class="st"] floating enable
 for_window [class="pavucontrol"] floating enable
 for_window [class="Vncviewer"] floating enable
+#for_window [class="Pcmanfm"] floating disable
 
 # for_window [class=".*"] floating enable
+
 for_window [floating] move position center
+
 
 exec_always --no-startup-id sh -c "pkill plasma_waitforname; pkill gnome-shell; killall dunst; dunst"
 
@@ -210,10 +221,11 @@ bindsym Print exec flameshot full --clipboard
 bindsym Mod4+Print exec flameshot full --path ~/Pictures/
 bindsym Shift+Print exec flameshot gui
 
-exec --no-startup-id xinput set-prop "SynPS/2 Synaptics TouchPad" "libinput Tapping Enabled" 1
+exec_always --no-startup-id xinput set-prop "SynPS/2 Synaptics TouchPad" "libinput Tapping Enabled" 1
 # exec --no-startup-id discord --start-minimized &
 
-exec --no-startup-id xsetroot -solid black
-exec_always --no-startup-id xrandr --output DisplayPort-0 --brightness 1 --gamma 1.1:1:0.7
+exec_always --no-startup-id xsetroot -solid black
+exec_always --no-startup-id xset r rate 200 50 &
+exec_always --no-startup-id xrandr --output DP-1 --brightness 1 --gamma 1.1:1:0.7
 
 # exec_always --no-startup-id feh --bg-fill "$(find $HOME/.config/i3/wallpapers -type f | shuf -n 1)"

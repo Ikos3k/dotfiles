@@ -37,6 +37,7 @@ HOME_FILES=(
     ".config/zed/settings.json"
     ".config/micro/settings.json"
     ".config/pcmanfm/default/pcmanfm.conf"
+    ".config/libfm/libfm.conf"
     ".config/lazygit/config.yml"
     ".config/dunst/dunstrc"
     ".config/fish/config.fish"

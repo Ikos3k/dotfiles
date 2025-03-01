@@ -1,18 +1,22 @@
 #!/bin/bash
 
 HASH_FILE="file_hashes.txt"
-CURRENT_HASHES=$(find . -type f ! -name "$(basename "$0")" ! -name "$HASH_FILE" -exec sha256sum {} +)
+NUM_THREADS=4
+
+CURRENT_HASHES=$(find . -type f ! -name "$(basename "$0")" ! -name "$HASH_FILE" ! -name "*checksum*" ! -name "*sha256sum*" ! -name "*check_sum*" ! -name "*crc32*" ! -name "*md5sum*" ! -name "*hash*" ! -name "*digest*" -print0 | xargs -0 -P $NUM_THREADS -n 1 sha256sum | sort)
+# CURRENT_HASHES=$(find . -type f ! -name "$(basename "$0")" ! -name "$HASH_FILE" ! -name "*checksum*" ! -name "*sha256sum*" ! -name "*check_sum*" ! -name "*crc32*" ! -name "*md5sum*" ! -name "*hash*" ! -name "*digest*" -exec sha256sum {} +)
 
 if [[ -f "$HASH_FILE" ]]; then
     echo "Comparing with existing hashes..."
-    CHANGED=$(diff --color=always <(echo "$CURRENT_HASHES") "$HASH_FILE")
+    SORTED_HASH_FILE=$(sort "$HASH_FILE")
+    CHANGED=$(diff --color=always <(echo "$SORTED_HASH_FILE") <(echo "$CURRENT_HASHES"))
 
     if [[ -z "$CHANGED" ]]; then
         echo "No changes detected."
     else
         echo "Changes detected:"
         echo "$CHANGED"
-        read -p "Do you want to update the hash file with the new hashes? (y/n): " CONFIRM
+        read -p "Do you want to update the hash file with the new hashes? (y/N): " CONFIRM
         if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
             echo "Updating $HASH_FILE with the new hashes..."
             echo "$CURRENT_HASHES" > "$HASH_FILE"

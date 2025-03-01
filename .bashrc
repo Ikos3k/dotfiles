@@ -5,10 +5,10 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-# fastfetch
 fortune -as | cowsay -r
 
-alias rm='rm -i'
+alias rm='rm -iv'
+alias mv='mv -v'
 alias ls='ls --color=auto'
 alias la='ls -A'
 alias l='ls -CF'
@@ -18,7 +18,7 @@ alias egrep='egrep --color=auto'
 alias feh='feh --scale-down'
 alias bat='bat --theme=1337'
 
-alias disks='lsblk -e7 -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT | while read -r line; do \
+alias disks='lsblk -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT | while read -r line; do \
   disk=$(echo $line | awk "{print \$1}"); \
   if [[ "$disk" =~ ^sd[a-z]$ ]]; then \
     model=$(udevadm info --query=all --name=/dev/$disk | grep "ID_MODEL=" | cut -d "=" -f 2); \
@@ -29,12 +29,12 @@ alias disks='lsblk -e7 -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT | while read -r line;
   fi; \
 done'
 
-# alias disks2='for disk in /dev/sd*; do \
-#   if [ -e "$disk" ]; then \
-#     echo "Disk: $disk"; \
-#     sudo parted $disk print; \
-#   fi; \
-# done'
+alias disks2='for disk in /dev/sd*; do \
+   if [ -e "$disk" ]; then \
+     echo "Disk: $disk"; \
+     sudo parted $disk print; \
+   fi; \
+done'
 
 alias ips='printf "%s\t%s\t%s\n" "NAME" "KIND" "IP ADDRESS"; ip -o addr show | while read -r line; do \
   name=$(echo $line | awk "{print \$2}"); \
@@ -84,14 +84,7 @@ alias pull='git pull'
 alias fetch='git fetch'
 alias fetch-pulls='function pull-req() { git fetch --depth 1 origin "refs/pull/*:refs/remotes/origin/pull/*"; }; pull-req'
 alias fetch-open-pulls='function pull-oreq() { git fetch --depth 1 origin "refs/pull/*:refs/remotes/origin/pull/*"; }; pull-oreq'
-
-clone_branch() {
-    if [ $# -ne 2 ]; then
-        echo "Usage: clone_branch <repository_url> <branch_name>"
-        return 1
-    fi
-    git clone --depth=1 --branch "$2" "$1"
-}
+alias bclone='git clone --depth=1 --branch'
 
 # pacman
 alias i='sudo pacman -S'
@@ -108,7 +101,7 @@ alias keyfix='sudo pacman-key --init && sudo pacman-key --populate archlinux'
 alias powoff="sudo udisksctl power-off -b" 
 alias cmake-build="mkdir build && cd build && cmake .. && cmake --build . -j12"
 
-alias make-python-env="python3 -m venv my_env"
+alias mk-python-env="python3 -m venv my_env"
 alias activate-env="source my_env/bin/activate"
 
 mkv_to_mp4() {
@@ -125,7 +118,6 @@ mkv_to_mp4() {
     echo "Conversion complete: $output_file"
 }
 
-
 dl() {
     if [ -z "$1" ]; then
         echo "Usage: dl <URL> [filename]"
@@ -139,6 +131,38 @@ dl() {
         wget --user-agent="Mozilla/5.0" --progress=bar:force -c "$url"
     else
         wget --user-agent="Mozilla/5.0" --progress=bar:force -c -O "$filename" "$url"
+    fi
+}
+
+dl2() {
+    if [ -z "$1" ]; then
+        echo "Usage: dl <URL> [filename]"
+        return 1
+    fi
+
+    local url="$1"
+    local filename="$2"
+
+    if [ -z "$filename" ]; then
+        axel -a -n 4 -o "$(basename "$url")" "$url"
+    else
+        axel -a -n 4 -o "$filename" "$url"
+    fi
+}
+
+dl3() {
+    if [ -z "$1" ]; then
+        echo "Usage: dl <URL> [filename]"
+        return 1
+    fi
+
+    local url="$1"
+    local filename="$2"
+
+    if [ -z "$filename" ]; then
+        aria2c -x 4 -k 1M -o "$(basename "$url")" "$url"
+    else
+        aria2c -x 4 -k 1M -o "$filename" "$url"
     fi
 }
 
@@ -260,23 +284,17 @@ export PS1='$(git branch &>/dev/null;
 if [ $? -eq 0 ]; then 
     # Git repository detected
     BRANCH=$(git branch | grep ^* | sed "s/\* //")
-    # Check if there are any commits
     if git rev-parse --verify HEAD &>/dev/null; then
         # There are commits
         COMMIT=$(git rev-parse --short HEAD)
     else
-        # No commits yet
         COMMIT="no commits"
     fi
     STATUS=$(git status)
 
-    # Start the prompt with user@host and current working directory
     PS1_PROMPT="\[\e[1m\]\u@\h\[\e[0m\]: \w "
-
-    # Display the branch in blue
     PS1_PROMPT+="[\[\e[34m\]$BRANCH\[\e[0m\]"
 
-    # Check if there are uncommitted changes, display * in red if true
     if echo "$STATUS" | grep -q "nothing to commit"; then
         PS1_PROMPT+="]"
     else
@@ -284,15 +302,22 @@ if [ $? -eq 0 ]; then
     fi
 
     PS1_PROMPT+=" [\[\e[1;32m\]$COMMIT\[\e[0m\]]"
-
     PS1_PROMPT+=" \$ "
     echo "$PS1_PROMPT"
 else 
-    # Not in a git repository
     echo "\[\e[1m\]\u@\h\[\e[0m\]: \w \$ "
 fi)'
 
 eval "$(zoxide init bash)"
+
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+export PATH=$JAVA_HOME/bin:$PATH
+export ANDROID_HOME=/home/ikos3k/Android/Sdk
+export ANDROID_SDK_ROOT=/home/ikos3k/Android/Sdk
+export PATH=$ANDROID_HOME/tools:$PATH
+export PATH=$ANDROID_HOME/tools/bin:$PATH
+export PATH=$ANDROID_HOME/platform-tools:$PATH
+
 
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/home/ikos3k/.lmstudio/bin"

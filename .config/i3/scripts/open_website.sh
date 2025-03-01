@@ -5,8 +5,8 @@ ENABLE_CATEGORIES=${ENABLE_CATEGORIES:-1}
 
 declare -A categories
 categories=(
-    ["AI"]="chatgpt deepseek duck.ai"
-    ["Search Engines"]="google duckduckgo"
+    ["AI"]="chatgpt deepseek duck.ai t3.chat"
+    ["Search Engines"]="duckduckgo google"
     ["Social Media"]="reddit discord"
     ["Development"]="github stackoverflow"
     ["Entertainment"]="youtube"
@@ -15,11 +15,12 @@ categories=(
 
 declare -A websites
 websites=(
-    ["google"]="https://www.google.com"
     ["duckduckgo"]="https://duckduckgo.com"
+    ["google"]="https://www.google.com"
     ["chatgpt"]="https://chatgpt.com"
     ["deepseek"]="https://chat.deepseek.com"
     ["duck.ai"]="https://duck.ai"
+    ["t3.chat"]="https://t3.chat"
     ["github"]="https://www.github.com"
     ["reddit"]="https://www.reddit.com"
     ["youtube"]="https://www.youtube.com"
@@ -31,13 +32,12 @@ websites=(
 if [[ "$1" == "rofi" ]]; then
     command="rofi -dmenu -theme ~/.config/rofi/mytheme.rasi"
 else
-	if [[ "$DMENU_ORIENTATION" == "horizontal" ]]; then
+    if [[ "$DMENU_ORIENTATION" == "horizontal" ]]; then
         dmenu_cmd='dmenu -l 10 -nb #1e1e1e -sf #1e1e1e -sb #f4800d -nf #F4800d'
     else
-        dmenu_cmd='dmenu -nb #1e1e1e -sf #1e1e1e -sb #f4800d -nf #F4800d'
+        dmenu_cmd='dmenu -nb #000000 -sf #bdb9b9 -sb #181818 -nf #ffffff'
     fi
     command="${dmenu_cmd}"
-    # command="i3-dmenu-desktop --entry-type=filename --dmenu='${dmenu_cmd}'"
 fi
 
 if [[ "$ENABLE_CATEGORIES" -eq 1 ]]; then
