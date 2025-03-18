@@ -25,6 +25,7 @@ check-disk-busy() {
     else
         echo "$MOUNT_POINT is not busy. Proceeding to unmount."
     fi
+    rm -f /tmp/disk_busy_check.log
 }
 
 eject-device() {
@@ -77,28 +78,43 @@ fi
 PARTITION=$1
 MOUNT_POINT=$2
 
+if [ ! -e "$PARTITION" ]; then
+    echo "Partition $PARTITION does not exist."
+    exit 1
+fi
+
 if [ -z "$MOUNT_POINT" ]; then
     MOUNT_POINT=$(findmnt -n -o TARGET "$PARTITION")
     if [ -z "$MOUNT_POINT" ]; then
         echo "Could not find a mount point for device $PARTITION."
-        exit 1
+        DEVICE="/dev/$(lsblk -no PKNAME "$PARTITION")"
+        if [ -z "$DEVICE" ]; then
+            echo "Could not determine the device for $PARTITION."
+            exit 1
+        fi
+        echo "Device detected: $DEVICE"
+        power-off-device "$DEVICE"
+        exit 0
     fi
     echo "Detected mount point for $PARTITION: $MOUNT_POINT"
 fi
 
-DEVICE="/dev/$(lsblk -no PKNAME "$PARTITION")"
+if ! mountpoint -q "$MOUNT_POINT"; then
+    echo "$MOUNT_POINT is not a valid mount point or does not exist."
+    exit 1
+fi
 
+DEVICE="/dev/$(lsblk -no PKNAME "$PARTITION")"
 if [ -z "$DEVICE" ]; then
     echo "Could not determine the device for $PARTITION."
     exit 1
 fi
-
 echo "Device detected: $DEVICE"
 
 if ! grep -q "$PARTITION" /proc/mounts; then
     echo "Partition $PARTITION is not mounted."
     power-off-device "$DEVICE"
-    exit 1
+    exit 0
 fi
 
 if [ -n "$MOUNT_POINT" ] && ! mountpoint -q "$MOUNT_POINT"; then

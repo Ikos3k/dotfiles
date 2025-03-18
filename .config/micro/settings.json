@@ -8,5 +8,6 @@
     "mkparents": true,
     "relativeruler": true,
     "tabhighlight": true,
+    "eofnewline": false,
     "tabstospaces": true
 }
