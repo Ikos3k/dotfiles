@@ -17,6 +17,19 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias feh='feh --scale-down'
 alias bat='bat --theme=1337'
+alias ff='fastfetch'
+alias less='less -R'
+alias diff='diff --color=auto'
+
+# alias vi='vim'
+# alias v='vim'
+alias vim='gvim -v'
+alias vi='gvim -v'
+alias v='gvim -v'
+alias m='micro'
+
+alias fvlc='flatpak run org.videolan.VLC'
+alias fmypaint='flatpak run org.mypaint.MyPaint'
 
 alias disks='lsblk -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT | while read -r line; do \
   disk=$(echo $line | awk "{print \$1}"); \
@@ -55,7 +68,7 @@ alias snaps='snap list'
 alias files='ls | wc -l'
 
 alias cls='clear'
-alias reload='source ~/.bashrc'
+alias reload='. ~/.bashrc'
 alias end='systemctl poweroff'
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -66,7 +79,7 @@ alias update-grub='sudo grub-mkconfig -o /boot/grub/grub.cfg'
 alias myip="curl ipinfo.io/ip; echo"
 alias localip="ip a | grep inet | grep -v inet6 | grep -v '127.0.0.1' | awk '{print \$2}' | cut -d/ -f1"
 
-alias cleanupall='sudo pacman -Sc && yay -Sc && sudo journalctl --vacuum-time=2weeks'
+alias cleanupall='sudo pacman -Sc && yay -Sc && sudo journalctl --vacuum-time=2weeks && rm -rf ~/.cache/*' # rm -rf ~/.local/share/Trash/files/*
 alias fs='stat --printf="%s bytes\n"'
 alias wipehist='history -c && history -w'
 
@@ -101,8 +114,9 @@ alias keyfix='sudo pacman-key --init && sudo pacman-key --populate archlinux'
 alias powoff="sudo udisksctl power-off -b" 
 alias cmake-build="mkdir build && cd build && cmake .. && cmake --build . -j12"
 
-alias mk-python-env="python3 -m venv my_env"
-alias activate-env="source my_env/bin/activate"
+alias mk-python-env="python3 -m venv .env"
+alias activate-env=". .env/bin/activate"
+alias kill9='pkill -9'
 
 mkv_to_mp4() {
     if [[ -z "$1" ]]; then
@@ -136,7 +150,7 @@ dl() {
 
 dl2() {
     if [ -z "$1" ]; then
-        echo "Usage: dl <URL> [filename]"
+        echo "Usage: dl2 <URL> [filename]"
         return 1
     fi
 
@@ -152,7 +166,7 @@ dl2() {
 
 dl3() {
     if [ -z "$1" ]; then
-        echo "Usage: dl <URL> [filename]"
+        echo "Usage: dl3 <URL> [filename]"
         return 1
     fi
 

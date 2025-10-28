@@ -1,0 +1,47 @@
+# hemisu.vim - Vim color scheme
+# ----------------------------------------------------------
+# Author:   Noah Frederick (http://noahfrederick.com/)
+# Version:  3.4
+# License:  Creative Commons Attribution-NonCommercial
+#           3.0 Unported License       (see README.md)
+# > ported hemisu.micro by ikos3k (it's not exactly the same)
+# ----------------------------------------------------------
+
+color-link default "#eeeeee,#000000"
+color-link comment "italic #777777"
+color-link constant "#9fd3e6"
+color-link constant.string "#b1d631"
+color-link constant.number "#9fd3e6"
+color-link string "#b1d631"
+color-link number "#9fd3e6"
+color-link identifier "bold #eeeeee"
+color-link function "bold #eeeeee"
+color-link statement "#bbffaa"
+color-link preproc "#9fd3e6"
+color-link type "#bbffaa"
+color-link special "#9fd3e6"
+color-link underlined "underline #9fd3e6"
+color-link keyword "bold #b1d631"
+color-link operator "#999999"
+color-link delimiter "#999999"
+color-link todo "bold #d65e76"
+color-link error " ,#63001c"
+color-link line-number "#444444"
+color-link current-line " ,#111111"
+color-link current-line-number "#777777"
+color-link statusline "bold #eeeeee,#111111"
+color-link tabbar "#999999,#111111"
+color-link tabbar.active "bold #eeeeee,#111111"
+color-link indent-char "#444444"
+color-link divider "#444444,#111111"
+color-link scrollbar "#444444"
+color-link symbol "#999999"
+color-link whitespace "#444444"
+color-link match-brace "bold #9fd3e6,#111111"
+color-link gutter-error "#d65e76"
+color-link gutter-warning "#ece1c8"
+color-link diff-added " ,#5f5f00"
+color-link diff-modified " ,#63001c"
+color-link diff-deleted "#d65e76,#63001c"
+color-link completion "#eeeeee,#111111"
+color-link completion.selected "#eeeeee,#005f87"
