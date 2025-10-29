@@ -54,7 +54,48 @@ function! GetCfile()
   return file
 endfunction
 
-nnoremap <C-k> :call system('feh --scale-down ' . shellescape(GetCfile()) . ' &')<CR>
+function! HandleImagePreview()
+  let file_or_hash = GetCfile()
+ 
+  if file_or_hash =~? '^[0-9a-f]\{64}$'
+    let cwd = getcwd()
+   
+    let find_cmd = 'find "' . cwd . '" -type f \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.gif" -o -name "*.bmp" -o -name "*.webp" -o -name "*.svg" -o -name "*.heic" \) 2>/dev/null'
+    let image_files = split(system(find_cmd), '\n')
+   
+    if empty(image_files)
+      echo "No image files found in " . cwd
+      return
+    endif
+   
+    echo "Searching " . len(image_files) . " images for hash: " . file_or_hash
+   
+    for image_file in image_files
+      let image_file = substitute(image_file, '\s*$', '', '')
+     
+      let hash_cmd = 'sha256sum "' . image_file . '" 2>/dev/null'
+      let hash_output = system(hash_cmd)
+     
+      if v:shell_error == 0 && !empty(hash_output)
+        let file_hash = split(hash_output)[0]
+       
+        if file_hash ==# file_or_hash
+          echo "Found: " . image_file
+          call system('nohup feh --scale-down "' . image_file . '" >/dev/null 2>&1 &')
+          return
+        endif
+      endif
+    endfor
+   
+    echo "No image found with hash: " . file_or_hash
+   
+  else
+    echo "Opening file: " . file_or_hash
+    call system('nohup feh --scale-down ' . shellescape(file_or_hash) . ' >/dev/null 2>&1 &')
+  endif
+endfunction
+
+nnoremap <C-k> :call HandleImagePreview()<CR>
 
 let g:Hexokinase_highlighters = ['backgroundfull']
 let g:Hexokinase_optInPatterns = 'full_hex,triple_hex,rgb,rgba,hsl,hsla,colour_names'
