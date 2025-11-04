@@ -17,7 +17,7 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias feh='feh --scale-down'
 alias bat='bat --theme=1337'
-alias ff='fastfetch'
+alias ff='fastfetch || neofetch'
 alias less='less -R'
 alias diff='diff --color=auto'
 
@@ -112,7 +112,7 @@ alias upgrade='sudo pacman -Syyu'
 alias keyfix='sudo pacman-key --init && sudo pacman-key --populate archlinux'
 
 alias powoff="sudo udisksctl power-off -b" 
-alias cmake-build="mkdir build && cd build && cmake .. && cmake --build . -j12"
+alias cmake-build="mkdir build && cd build && cmake .. && cmake --build . -j$(nproc)"
 
 alias mk-python-env="python3 -m venv .env"
 alias activate-env=". .env/bin/activate"
@@ -296,10 +296,8 @@ mv_last() {
 
 export PS1='$(git branch &>/dev/null; 
 if [ $? -eq 0 ]; then 
-    # Git repository detected
     BRANCH=$(git branch | grep ^* | sed "s/\* //")
     if git rev-parse --verify HEAD &>/dev/null; then
-        # There are commits
         COMMIT=$(git rev-parse --short HEAD)
     else
         COMMIT="no commits"
@@ -322,6 +320,10 @@ else
     echo "\[\e[1m\]\u@\h\[\e[0m\]: \w \$ "
 fi)'
 
+if [ -f /usr/share/git/completion/git-completion.bash ]; then
+  . /usr/share/git/completion/git-completion.bash
+fi
+
 eval "$(zoxide init bash)"
 
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
@@ -331,7 +333,6 @@ export ANDROID_SDK_ROOT=/home/ikos3k/Android/Sdk
 export PATH=$ANDROID_HOME/tools:$PATH
 export PATH=$ANDROID_HOME/tools/bin:$PATH
 export PATH=$ANDROID_HOME/platform-tools:$PATH
-
 
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/home/ikos3k/.lmstudio/bin"
