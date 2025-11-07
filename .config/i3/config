@@ -11,7 +11,7 @@ set $mod Mod1
 font pango:DejaVu Sans Mono 8
 
 # exec --no-startup-id picom
-exec_always --no-startup-id pkill -x picom; sleep 0.5; picom
+# exec_always --no-startup-id pkill -x picom; sleep 0.5; picom
 # $ rm /etc/xdg/autostart/picom.desktop
 
 # exec --no-startup-id /usr/lib/xfce-polkit/xfce-polkit &
@@ -50,6 +50,9 @@ bindsym $mod+Shift+q kill
 
 bindsym $mod+x exec --no-startup-id dmenu_run -l 10 -fn 'Iosevkasa'
 bindsym $mod+d exec --no-startup-id i3-dmenu-desktop --entry-type=filename --dmenu='dmenu -l 10 -nb #000000 -sf #bdb9b9 -sb #181818 -nf #ffffff'
+
+exec --no-startup-id clipmenud
+bindsym $mod+g exec --no-startup-id clipmenu -i -nb '#000000' -sf '#bdb9b9' -sb '#181818' -nf '#ffffff'
 
 # change focus
 bindsym $mod+j focus left
@@ -224,8 +227,9 @@ bindsym Shift+Print exec flameshot gui
 exec_always --no-startup-id xinput set-prop "SynPS/2 Synaptics TouchPad" "libinput Tapping Enabled" 1
 # exec --no-startup-id discord --start-minimized &
 
-exec_always --no-startup-id xsetroot -solid black
+# exec_always --no-startup-id xsetroot -solid black
+exec_always --no-startup-id feh --bg-max ~/image-processing/out/006_4889f.jpg
+# exec_always --no-startup-id feh --bg-fill "$(find $HOME/.config/i3/wallpapers -type f | shuf -n 1)"
+
 exec_always --no-startup-id xset r rate 200 50 &
 exec_always --no-startup-id xrandr --output DP-1 --brightness 1 --gamma 1.1:1:0.7
-
-# exec_always --no-startup-id feh --bg-fill "$(find $HOME/.config/i3/wallpapers -type f | shuf -n 1)"

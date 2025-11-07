@@ -5,7 +5,10 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-fortune -as | cowsay -r
+# fortune -as | cowsay -r
+bash scripts/hi.sh
+# viu /home/ikos3k/image-processing/out/006_4889f.jpg
+# viu /home/ikos3k/image-processing/out/$(ls /home/ikos3k/image-processing/out/ | shuf -n 1)
 
 alias rm='rm -iv'
 alias mv='mv -v'
@@ -17,7 +20,7 @@ alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
 alias feh='feh --scale-down'
 alias bat='bat --theme=1337'
-alias ff='fastfetch || neofetch'
+alias ff='fastfetch --logo "/home/ikos3k/testweb/public/images/$(ls "/home/ikos3k/testweb/public/images/" | shuf -n 1)" --logo-width 50 --logo-padding-top 0 --logo-padding-right 0 --logo-padding-left 0 --logo-preserve-aspect-ratio 1 2>/dev/null || neofetch'
 alias less='less -R'
 alias diff='diff --color=auto'
 

@@ -55,6 +55,7 @@ HOME_FILES=(
     ".config/ranger/rc.conf"
     ".config/katerc"
     ".config/kritarc"
+    "scripts/hi.sh"
     "scripts/switch_audio_out.sh"
     "scripts/fix_nameserver.sh"
     "scripts/service_manager.sh"
