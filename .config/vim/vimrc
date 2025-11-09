@@ -98,6 +98,72 @@ endfunction
 
 nnoremap <C-k> :call HandleImagePreview()<CR>
 
+function! GetImagePaths()
+  let paths = []
+  let save_pos = getpos('.')
+  let line_num = line('.')
+  let line = getline('.')
+
+  while 1
+    let file = expand('<cfile>')
+    if file == '' || ! (file =~? '\.\(jpg\|jpeg\|png\|gif\|bmp\|webp\|svg\|heic\)$')
+      break
+    endif
+    call insert(paths, file)
+    let file_len = strlen(file)
+    let new_col = col('.') - file_len - 1
+    if new_col < 1
+      break
+    endif
+    call cursor(line_num, new_col)
+    if line[new_col - 2] != ' '
+      break
+    endif
+  endwhile
+
+  call setpos('.', save_pos)
+  call reverse(paths)
+
+  call setpos('.', save_pos)
+  let col = col('.') + strlen(expand('<cfile>'))
+  call cursor(line_num, col)
+  while 1
+    if col > strlen(line)
+      break
+    endif
+    if line[col - 1] != ' '
+      break
+    endif
+    call cursor(line_num, col + 1)
+    let file = expand('<cfile>')
+    if file == '' || ! (file =~? '\.\(jpg\|jpeg\|png\|gif\|bmp\|webp\|svg\|heic\)$')
+      break
+    endif
+    call add(paths, file)
+    let file_len = strlen(file)
+    let col = col('.') + file_len
+    call cursor(line_num, col)
+  endwhile
+
+  call setpos('.', save_pos)
+  return paths
+endfunction
+
+function! HandleMultiImagePreview()
+  let paths = GetImagePaths()
+  if empty(paths)
+    echo "No valid image paths found around cursor."
+    return
+  endif
+
+  let escaped_paths = map(paths, 'shellescape(expand(v:val))')
+  let cmd = 'nohup feh --scale-down ' . join(escaped_paths, ' ') . ' >/dev/null 2>&1 &'
+  call system(cmd)
+endfunction
+
+" nnoremap <S-C-k> :call HandleMultiImagePreview()<CR>
+nnoremap <F8> :call HandleMultiImagePreview()<CR>
+
 let g:Hexokinase_highlighters = ['backgroundfull']
 let g:Hexokinase_optInPatterns = 'full_hex,triple_hex,rgb,rgba,hsl,hsla,colour_names'
 
