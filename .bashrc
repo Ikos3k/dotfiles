@@ -6,7 +6,7 @@
 [[ $- != *i* ]] && return
 
 # fortune -as | cowsay -r
-bash scripts/hi.sh
+bash "$HOME/scripts/hi.sh"
 # viu /home/ikos3k/image-processing/out/006_4889f.jpg
 # viu /home/ikos3k/image-processing/out/$(ls /home/ikos3k/image-processing/out/ | shuf -n 1)
 
@@ -18,9 +18,11 @@ alias l='ls -CF'
 alias ll='ls -alF'
 alias grep='grep --color=auto'
 alias egrep='egrep --color=auto'
+alias diff='diff --color=auto'
 alias feh='feh --scale-down'
 alias bat='bat --theme=1337'
-alias ff='fastfetch --logo "/home/ikos3k/testweb/public/images/$(ls "/home/ikos3k/testweb/public/images/" | shuf -n 1)" --logo-width 50 --logo-padding-top 0 --logo-padding-right 0 --logo-padding-left 0 --logo-preserve-aspect-ratio 1 2>/dev/null || neofetch'
+# alias ff='fastfetch --logo "/home/ikos3k/testweb/public/images/$(ls "/home/ikos3k/testweb/public/images/" | shuf -n 1)" --logo-width 50 --logo-padding-top 0 --logo-padding-right 0 --logo-padding-left 0 --logo-preserve-aspect-ratio 1 2>/dev/null || neofetch'
+alias ff='fastfetch  2>/dev/null || neofetch'
 alias less='less -R'
 alias diff='diff --color=auto'
 
@@ -117,7 +119,7 @@ alias keyfix='sudo pacman-key --init && sudo pacman-key --populate archlinux'
 alias powoff="sudo udisksctl power-off -b" 
 alias cmake-build="mkdir build && cd build && cmake .. && cmake --build . -j$(nproc)"
 
-alias mk-python-env="python3 -m venv .env"
+alias mk-python-env="python3 -m venv .env/"
 alias activate-env=". .env/bin/activate"
 alias kill9='pkill -9'
 

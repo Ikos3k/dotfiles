@@ -12,7 +12,7 @@ This script allows you to back up and restore files.
   - `backup`: Create a backup of files.
   - `restore`: Restore files from the backup.
 - `[-diff]`: Optional flag for the both actions.
-  - `-diff`: Compare files and show differences during the restore process.
+  - `-diff`: Compare files and show differences.
 - `[-safe]`: Optional flag for the `restore` action.
   - `-safe`: Prompt for confirmation before restoring each file. Automatically shows differences.
 

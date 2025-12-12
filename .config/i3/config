@@ -40,8 +40,14 @@ bindsym Shift+XF86MonBrightnessUp exec --no-startup-id bash ~/.config/i3/scripts
 bindsym XF86MonBrightnessDown exec --no-startup-id bash ~/.config/i3/scripts/backlight.sh
 bindsym Shift+XF86MonBrightnessDown exec --no-startup-id bash ~/.config/i3/scripts/backlight.sh
 
+# bindsym XF86MonBrightnessUp exec brightnessctl set +5% && bash ~/.config/i3/scripts/backlight.sh
+# bindsym XF86MonBrightnessDown exec brightnessctl set 5%- && bash ~/.config/i3/scripts/backlight.sh
+# bindsym Shift+XF86MonBrightnessUp exec brightnessctl set +1% && bash ~/.config/i3/scripts/backlight.sh
+# bindsym Shift+XF86MonBrightnessDown exec brightnessctl set 1%- && bash ~/.config/i3/scripts/backlight.sh
+
 floating_modifier $mod
-tiling_drag off
+# tiling_drag off
+tiling_drag modifier titlebar
 
 # bindsym $mod+Return exec alacritty
 bindsym $mod+Return exec st
@@ -224,7 +230,7 @@ bindsym Print exec flameshot full --clipboard
 bindsym Mod4+Print exec flameshot full --path ~/Pictures/
 bindsym Shift+Print exec flameshot gui
 
-exec_always --no-startup-id xinput set-prop "SynPS/2 Synaptics TouchPad" "libinput Tapping Enabled" 1
+exec_always --no-startup-id sh -c 'xinput list | grep -i "touchpad" | grep -o "id=[0-9]*" | cut -d= -f2 | xargs -I{} xinput set-prop {} "libinput Tapping Enabled" 1'
 # exec --no-startup-id discord --start-minimized &
 
 # exec_always --no-startup-id xsetroot -solid black

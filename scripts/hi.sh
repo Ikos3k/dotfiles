@@ -13,7 +13,6 @@ image_height=$((rows - 2))
 fortune -a -s | cowsay -W $((half - 2)) -r
 # fastfetch --logo "/home/ikos3k/testweb/public/images/$(ls "/home/ikos3k/testweb/public/images/" | shuf -n 1)" --logo-width 50 --logo-padding-top 0 --logo-padding-right 0 --logo-padding-left 0 --logo-preserve-aspect-ratio 1
 # fastfetch --logo "/home/ikos3k/testweb/public/images/download222.jpeg" --logo-width 50 --logo-padding-top 0 --logo-padding-right 0 --logo-padding-left 0 --logo-preserve-aspect-ratio 1
-# fastfetch
 
 image_path="/home/ikos3k/image-processing/out/006_4889f.jpg"
 # image_path="/home/ikos3k/image-processing/out/$(ls "/home/ikos3k/image-processing/out/" | shuf -n 1)"
@@ -32,4 +31,3 @@ else
     x=$((cols - prop_width))
     viu --absolute-offset -x "$x" -y 1 -h "$image_height" -s "$image_path"
 fi
-

@@ -33,6 +33,9 @@ Plug 'tpope/vim-commentary'
 Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 Plug 'benzanol/vim-imager'
 
+Plug 'tpope/vim-fugitive'
+Plug 'mhinz/vim-signify'
+
 call plug#end()
 
 set isfname+=(,)
@@ -161,30 +164,29 @@ function! HandleMultiImagePreview()
   call system(cmd)
 endfunction
 
-" nnoremap <S-C-k> :call HandleMultiImagePreview()<CR>
 nnoremap <F8> :call HandleMultiImagePreview()<CR>
 
 function! ProcessLineCommand()
   let cmd_map = {
     \ 'stitch': 'python3 src/stitch_images.py -silent -gui -nodebug --no_out /tmp/out.png',
     \ 'remove_filter': 'python3 src/remove_filter.py -gui --generate_original -o /tmp/out.png',
-    \ 'swap_face': 'python3 src/swap_face.py --nodebug --quiet target.png',
-    \ 'enhance_image': 'echo TODO',
+    \ 'swap_face': 'python3 src/swap_face.py -silent -nodebug /tmp/out.png',
+    \ 'upscale': 'python3 src/upscale_image.py -s 2 -m espcn_x2 -o /tmp/out.png',
+    \ 'enhance': 'echo TODO',
     \ }
 
-  let line = getline('.')
-  let line = substitute(line, '^\s*#', '', '')
+  let line = substitute(getline('.'), '^\s*#', '', '')
   let words = split(line)
   if !empty(words)
     let first_word = words[0]
     if has_key(cmd_map, first_word)
-      let processed_line = substitute(line, '^\s*\zs\ze' . first_word, cmd_map[first_word], '')
-      let cmd = 'bash -c "source .env/bin/activate && ' .
+      let processed_line = substitute(line, '^\s*' . first_word, cmd_map[first_word], '')
+      let cmd = 'bash -c ". .env/bin/activate && ' .
             \ processed_line .
             \ '" >/dev/null 2>&1 &'
             " \ '"'
       call system(cmd)
-      echo "Executed " . first_word . " command from line."
+      " echo "Executed " . first_word . " command from line."
       return
     endif
   endif
@@ -196,7 +198,7 @@ function! ProcessLineCommand()
   endif
   let escaped_paths = map(paths, 'shellescape(expand(v:val))')
   let cmd = 'bash -c ". .env/bin/activate && ' .
-        \ 'python3 src/stitch_images.py -silent -gui -nodebug --no_out /tmp/out.png ' .
+        \ cmd_map['stitch'] . ' ' .
         \ join(escaped_paths, ' ') .
         \ '" >/dev/null 2>&1 &'
   call system(cmd)
@@ -204,6 +206,8 @@ function! ProcessLineCommand()
 endfunction
 
 nnoremap <F9> :call ProcessLineCommand()<CR>
+
+command! DiffSaved :w !diff --color=auto % -
 
 let g:Hexokinase_highlighters = ['backgroundfull']
 let g:Hexokinase_optInPatterns = 'full_hex,triple_hex,rgb,rgba,hsl,hsla,colour_names'

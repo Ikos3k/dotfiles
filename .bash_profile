@@ -8,13 +8,11 @@ export MICRO_TRUECOLOR=0
 export TERM=xterm-256color
 export COLORTERM=truecolor
 export TERMINAL=st
-export EDITOR=micro
+export EDITOR=vim
+export VISUAL=vim
 export PAGER=less
 export BROWSER=chromium
 
-# sudo archlinux-java set java-17-openjdk
-# sudo archlinux-java set java-11-openjdk
-# sudo archlinux-java set java-8-openjdk/jre
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
 export ANDROID_SDK_ROOT=~/Android
 export ANDROID_NDK_HOME=~/Android/ndk
