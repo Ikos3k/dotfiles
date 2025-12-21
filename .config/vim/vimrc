@@ -42,6 +42,15 @@ set isfname+=(,)
 set isfname+=)
 set isfname+=\\
 
+let g:last_image_output = '/tmp/out.png'
+let g:last_action_cmd = ''
+
+function! RunAndRemember(cmd)
+  let g:last_action_cmd = a:cmd
+  call system(a:cmd)
+  " call PreviewLastImage()
+endfunction
+
 function! GetCfile()
   let save_a = @a
   let @a = ''
@@ -168,7 +177,7 @@ nnoremap <F8> :call HandleMultiImagePreview()<CR>
 
 function! ProcessLineCommand()
   let cmd_map = {
-    \ 'stitch': 'python3 src/stitch_images.py -silent -gui -nodebug --no_out /tmp/out.png',
+    \ 'stitch': 'python3 src/stitch_images.py -silent -gui -nodebug /tmp/out.png',
     \ 'remove_filter': 'python3 src/remove_filter.py -gui --generate_original -o /tmp/out.png',
     \ 'swap_face': 'python3 src/swap_face.py -silent -nodebug /tmp/out.png',
     \ 'upscale': 'python3 src/upscale_image.py -s 2 -m espcn_x2 -o /tmp/out.png',
@@ -184,8 +193,8 @@ function! ProcessLineCommand()
       let cmd = 'bash -c ". .env/bin/activate && ' .
             \ processed_line .
             \ '" >/dev/null 2>&1 &'
-            " \ '"'
-      call system(cmd)
+      " call system(cmd)
+      call RunAndRemember(cmd)
       " echo "Executed " . first_word . " command from line."
       return
     endif
@@ -201,11 +210,33 @@ function! ProcessLineCommand()
         \ cmd_map['stitch'] . ' ' .
         \ join(escaped_paths, ' ') .
         \ '" >/dev/null 2>&1 &'
-  call system(cmd)
+  " call system(cmd)
+  call RunAndRemember(cmd)
   echo "Executed default stitch command."
 endfunction
 
 nnoremap <F9> :call ProcessLineCommand()<CR>
+
+function! RerunLastAction()
+  if empty(g:last_action_cmd)
+    echo "No previous action to rerun."
+    return
+  endif
+
+  call system(g:last_action_cmd)
+endfunction
+
+nnoremap <F10> :call RerunLastAction()<CR>
+
+function! ReopenLastImage()
+  if filereadable(g:last_image_output)
+    call system('nohup feh --scale-down ' . shellescape(g:last_image_output) . ' >/dev/null 2>&1 &')
+  else
+    echo "No last output image found."
+  endif
+endfunction
+
+nnoremap <F11> :call ReopenLastImage()<CR>
 
 command! DiffSaved :w !diff --color=auto % -
 

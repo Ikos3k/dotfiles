@@ -69,6 +69,7 @@ SYSTEM_FILES=(
     "/etc/systemd/logind.conf"
     "/etc/polkit-1/rules.d/10-udiskie.rules"
     "/etc/polkit-1/rules.d/50-udiskie.rules"
+    "/etc/modprobe.d/nobeep.conf"
     "/usr/local/bin/unmount_device"
     "/usr/local/bin/mount_device"
     "/usr/local/bin/check_hash"
